@@ -20,7 +20,9 @@ production launch.
 4. Open a pull request from `development` to `main` titled
    `Release v<version>`.
 5. Confirm Theme Check passes and review the complete release diff.
-6. Merge the release pull request using squash merge.
+6. Merge the release pull request using a merge commit so `main` remains an
+   ancestor of `development`. Squash merging long-lived branches causes their
+   histories to diverge and must not be used for releases.
 7. Verify Shopify's GitHub integration reports zero failed files for `main`.
 8. Confirm the public storefront identifies the expected live theme and perform
    a smoke test of navigation, product pages, cart, and checkout entry.
@@ -39,3 +41,13 @@ Routine release pull requests must not include a manual live-theme command.
 - Shopify integration completed without rejected files.
 - Production smoke test passed.
 - Rollback target is known before release.
+
+## Merge policy
+
+- Feature branches into `development`: squash merge.
+- `development` into `main`: merge commit.
+- After production: merge `main` back into `development` if GitHub does not
+  already show `main` as an ancestor.
+
+This distinction keeps feature history concise without breaking the ancestry
+needed for reliable repeated production promotions.

@@ -9,6 +9,8 @@ This repository is the permanent source of truth for the N8Forged Shopify theme.
 - Create feature branches from `development` using `feature/<short-description>`.
 - Open pull requests from feature branches into `development`.
 - Promote tested releases from `development` to `main` with a pull request.
+- Squash feature pull requests; use a merge commit for `development` to `main`
+  releases so long-lived branch ancestry is preserved.
 
 ## Change policy
 

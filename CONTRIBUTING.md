@@ -17,6 +17,10 @@ instructions are in [docs/development.md](docs/development.md).
 6. Push the feature branch and open a pull request into `development`.
 7. Test the development theme in Shopify before merging a release pull request into `main`.
 
+Squash-merge feature pull requests into `development`. Merge release pull
+requests from `development` into `main` with a merge commit so the long-lived
+branches retain shared ancestry.
+
 The complete promotion and recovery procedures are documented in
 [docs/releases.md](docs/releases.md) and [docs/rollback.md](docs/rollback.md).
 
