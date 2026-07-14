@@ -6,8 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */
-{
+ */{
   "sections": {
     "main": {
       "type": "main-page",
@@ -22,7 +21,6 @@
             "alignment": "left",
             "type_preset": "h2",
             "font": "var(--font-primary--family)",
-            "font_size": "",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -50,6 +48,7 @@
       "settings": {
         "content_direction": "column",
         "gap": 32,
+        "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 40,
         "padding-block-end": 80
       }
