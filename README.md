@@ -44,6 +44,7 @@ theme. Authentication is stored by Shopify CLI and must never be committed.
 - [Development guide](docs/development.md)
 - [Release process](docs/releases.md)
 - [Rollback procedure](docs/rollback.md)
+- [Horizon update procedure](docs/upstream-updates.md)
 - [Architecture decisions](docs/decisions/README.md)
 - [Security policy](SECURITY.md)
 - [Changelog](CHANGELOG.md)

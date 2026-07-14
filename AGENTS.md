@@ -32,3 +32,5 @@ Import upstream releases on a dedicated feature branch, validate them, and merge
 - Follow `docs/releases.md` for production promotions.
 - Follow `docs/rollback.md` for recovery; never rewrite production history.
 - Record durable architecture choices in `docs/decisions/`.
+- Follow `docs/upstream-updates.md` for Horizon updates; never auto-merge
+  upstream theme code.
