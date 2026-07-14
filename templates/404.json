@@ -6,8 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */
-{
+ */{
   "sections": {
     "main": {
       "type": "main-404",
@@ -22,7 +21,6 @@
             "alignment": "center",
             "type_preset": "h3",
             "font": "var(--font-primary--family)",
-            "font_size": "",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -47,7 +45,6 @@
             "alignment": "center",
             "type_preset": "rte",
             "font": "var(--font-primary--family)",
-            "font_size": "",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -90,6 +87,7 @@
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 20,
+        "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 100,
         "padding-block-end": 100
       }
@@ -138,7 +136,6 @@
                 "alignment": "left",
                 "type_preset": "h4",
                 "font": "var(--font-primary--family)",
-                "font_size": "",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
@@ -197,7 +194,7 @@
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "paragraph",
+                "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -244,7 +241,7 @@
           ]
         }
       },
-      "name": "t:names.featured_collection",
+      "name": "Featured collection",
       "settings": {
         "collection": "all",
         "layout_type": "grid",
@@ -260,6 +257,7 @@
         "section_width": "page-width",
         "horizontal_alignment": "center",
         "gap": 36,
+        "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 48,
         "padding-block-end": 48
       }

@@ -9,7 +9,7 @@
  */
 {
   "type": "header",
-  "name": "t:names.header",
+  "name": "Header",
   "sections": {
     "header_announcements_9jGBFp": {
       "type": "header-announcements",
@@ -18,10 +18,8 @@
           "type": "_announcement",
           "settings": {
             "text": "Welcome to our store",
-            "link": "",
             "font": "var(--font-subheading--family)",
             "font_size": "0.75rem",
-            "weight": "",
             "letter_spacing": "normal",
             "case": "none"
           },
@@ -35,10 +33,11 @@
       "settings": {
         "speed": 5,
         "section_width": "page-width",
+        "background_color": "{{ settings.color_palette.background }}",
         "divider_width": 1,
+        "divider_color": "{{ settings.color_palette.color2 }}",
         "padding-block-start": 15,
-        "padding-block-end": 15,
-        "divider_color": "{{ settings.color_palette.color3 }}"
+        "padding-block-end": 15
       }
     },
     "header_section": {
@@ -95,6 +94,7 @@
         "divider_width": 0,
         "divider_size": "page-width",
         "border_width": 0,
+        "background_color_top": "{{ settings.color_palette.background }}",
         "enable_transparent_header_home": false,
         "enable_transparent_header_product": false,
         "enable_transparent_header_collection": false
