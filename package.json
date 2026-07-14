@@ -1,0 +1,18 @@
+{
+  "name": "n8forged-shopify-theme",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Canonical Shopify theme for N8Forged",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "shopify:login": "shopify auth login",
+    "theme:check": "shopify theme check",
+    "theme:dev": "shopify theme dev --store n8forged.myshopify.com",
+    "theme:list": "shopify theme list --store n8forged.myshopify.com"
+  },
+  "devDependencies": {
+    "@shopify/cli": "4.5.1"
+  }
+}

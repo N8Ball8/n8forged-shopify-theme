@@ -1,5 +1,8 @@
 # Contributing to the N8Forged Shopify Theme
 
+Install the pinned toolchain with `npm ci`. Detailed setup and preview
+instructions are in [docs/development.md](docs/development.md).
+
 ## Standard workflow
 
 1. Update local branches:
@@ -8,10 +11,18 @@
    `git switch development && git pull --ff-only origin development`
 3. Create a branch:
    `git switch -c feature/<short-description>`
-4. Make and validate one focused change at a time.
+4. Make and validate one focused change at a time with `npm run theme:check`
+   and `npm run theme:dev`.
 5. Commit with a meaningful imperative message.
 6. Push the feature branch and open a pull request into `development`.
 7. Test the development theme in Shopify before merging a release pull request into `main`.
+
+Squash-merge feature pull requests into `development`. Merge release pull
+requests from `development` into `main` with a merge commit so the long-lived
+branches retain shared ancestry.
+
+The complete promotion and recovery procedures are documented in
+[docs/releases.md](docs/releases.md) and [docs/rollback.md](docs/rollback.md).
 
 ## Production safeguards
 
