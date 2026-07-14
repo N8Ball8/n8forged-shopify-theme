@@ -6,8 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */
-{
+ */{
   "sections": {
     "section": {
       "type": "main-blog-post",
@@ -22,7 +21,6 @@
             "alignment": "center",
             "type_preset": "h2",
             "font": "var(--font-primary--family)",
-            "font_size": "",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -43,7 +41,6 @@
           "settings": {
             "show_date": true,
             "show_author": false,
-            "type_preset": "",
             "alignment": "center",
             "show_alignment": true,
             "padding-block-start": 0,
@@ -52,10 +49,10 @@
           "blocks": {}
         },
         "blog-post-image": {
-          "type": "_blog-post-featured-image",
+          "type": "image",
           "name": "Featured image",
           "settings": {
-            "image_ratio": "landscape",
+            "image": "{{ article.image }}",
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
@@ -87,6 +84,7 @@
       "settings": {
         "content_direction": "column",
         "gap": 32,
+        "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 40,
         "padding-block-end": 80
       }
