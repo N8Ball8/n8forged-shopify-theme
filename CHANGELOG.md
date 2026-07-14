@@ -5,10 +5,13 @@ All notable N8Forged theme changes will be documented here. Versions follow
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-14
+
 ### Added
 
-- Repeatable local validation and preview commands.
-- Development, release, rollback, and architecture-decision documentation.
+- Weekly non-destructive Horizon upstream monitoring.
+- Monthly Shopify CLI and GitHub Actions dependency maintenance.
+- GitHub Actions checkout v7 across automated workflows.
 
 ## [0.1.0] - 2026-07-14
 
@@ -18,6 +21,9 @@ All notable N8Forged theme changes will be documented here. Versions follow
 - GitHub-connected production and development themes.
 - Protected `main` and `development` branches.
 - Automated Theme Check validation for pull requests.
+- Repeatable local validation and preview commands.
+- Development, release, rollback, and architecture-decision documentation.
 
-[Unreleased]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/N8Ball8/n8forged-shopify-theme/releases/tag/v0.1.0
