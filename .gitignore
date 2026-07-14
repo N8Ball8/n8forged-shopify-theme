@@ -1,0 +1,16 @@
+# Operating system and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local Shopify state and credentials
+.shopify/
+.env
+.env.*
+!.env.example
+
+# JavaScript dependencies and build output
+node_modules/
+dist/
+coverage/
