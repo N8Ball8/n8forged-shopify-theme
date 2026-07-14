@@ -1,7 +1,7 @@
-.git/
-.github/
-.cursor/
-docs/
+.git/*
+.github/*
+.cursor/*
+docs/*
 .env
 .env.*
 .gitignore

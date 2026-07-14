@@ -1,0 +1,221 @@
+{{ 'n8forged-home.css' | asset_url | stylesheet_tag }}
+
+<div class="n8f-home">
+  <section class="n8f-hero" aria-labelledby="n8f-hero-title">
+    <div class="n8f-hero__grid" aria-hidden="true"></div>
+    <div class="n8f-orb n8f-orb--blue" aria-hidden="true"></div>
+    <div class="n8f-orb n8f-orb--violet" aria-hidden="true"></div>
+
+    <div class="n8f-shell n8f-hero__inner">
+      <div class="n8f-hero__copy">
+        <p class="n8f-eyebrow"><span></span>{{ section.settings.eyebrow }}</p>
+        <h1 id="n8f-hero-title">{{ section.settings.heading }}</h1>
+        <div class="n8f-hero__text">{{ section.settings.body }}</div>
+        <div class="n8f-actions">
+          <a class="n8f-button n8f-button--primary" href="{{ section.settings.primary_link }}">
+            {{ section.settings.primary_label }}
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a class="n8f-button n8f-button--secondary" href="#mission">{{ section.settings.secondary_label }}</a>
+        </div>
+        <ul class="n8f-proof" role="list">
+          <li><span aria-hidden="true">01</span> Original designs</li>
+          <li><span aria-hidden="true">02</span> Purpose-driven launch</li>
+          <li><span aria-hidden="true">03</span> Faith that continues</li>
+        </ul>
+      </div>
+
+      <div class="n8f-hero__visual" aria-label="N8Forged campaign mark">
+        <div class="n8f-forge-card">
+          <div class="n8f-forge-card__topline">
+            <span>N8F / CR-01</span>
+            <span class="n8f-status"><i></i> Mission active</span>
+          </div>
+          <div class="n8f-forge-mark" aria-hidden="true">
+            <span>N8</span>
+            <strong>FORGED</strong>
+          </div>
+          <div class="n8f-forge-card__footer">
+            <span>Costa Rica</span>
+            <span>Ideas forged with purpose</span>
+          </div>
+        </div>
+        <div class="n8f-coordinate n8f-coordinate--one">09.7489° N</div>
+        <div class="n8f-coordinate n8f-coordinate--two">83.7534° W</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mission" class="n8f-mission" aria-labelledby="n8f-mission-title">
+    <div class="n8f-shell n8f-mission__grid">
+      <div>
+        <p class="n8f-kicker">The first mission</p>
+        <h2 id="n8f-mission-title">{{ section.settings.mission_heading }}</h2>
+      </div>
+      <div class="n8f-mission__body">
+        {{ section.settings.mission_body }}
+        <p class="n8f-note">The campaign is the beginning. N8Forged is being built to keep creating long after this journey.</p>
+      </div>
+    </div>
+  </section>
+
+  {% if section.settings.collection != blank %}
+    <section class="n8f-products" aria-labelledby="n8f-products-title">
+      <div class="n8f-shell">
+        <div class="n8f-section-heading">
+          <div>
+            <p class="n8f-kicker">Launch collection</p>
+            <h2 id="n8f-products-title">Wear the mission</h2>
+          </div>
+          <a href="{{ section.settings.collection.url }}">View all <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="n8f-product-grid">
+          {% if section.settings.collection.products_count > 0 %}
+            {% for product in section.settings.collection.products limit: section.settings.product_limit %}
+              <article class="n8f-product-card">
+                <a href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                  <div class="n8f-product-card__media">
+                    {% if product.featured_image %}
+                      {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 25vw, 50vw', alt: product.featured_image.alt | default: product.title }}
+                    {% else %}
+                      {{ 'product-apparel-1' | placeholder_svg_tag: 'n8f-placeholder' }}
+                    {% endif %}
+                    <span class="n8f-product-card__action" aria-hidden="true">↗</span>
+                  </div>
+                  <div class="n8f-product-card__info">
+                    <h3>{{ product.title }}</h3>
+                    <p>{{ product.price | money }}</p>
+                  </div>
+                </a>
+              </article>
+            {% endfor %}
+          {% else %}
+            <div class="n8f-products-empty">
+              <span aria-hidden="true">N8F / DROP-01</span>
+              <h3>The first collection is being forged.</h3>
+              <p>Original mission designs are coming soon. Join the list below for the first release.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+  <section id="future" class="n8f-future" aria-labelledby="n8f-future-title">
+    <div class="n8f-shell">
+      <div class="n8f-section-heading n8f-section-heading--center">
+        <div>
+          <p class="n8f-kicker">Beyond the campaign</p>
+          <h2 id="n8f-future-title">One forge. More ways to create.</h2>
+        </div>
+      </div>
+      <div class="n8f-path-grid">
+        <article class="n8f-path n8f-path--active">
+          <span class="n8f-path__number">01</span>
+          <div class="n8f-path__icon" aria-hidden="true">✦</div>
+          <p>Available now</p>
+          <h3>Mission apparel</h3>
+          <span>Original designs that help move the Costa Rica mission forward.</span>
+        </article>
+        <article class="n8f-path">
+          <span class="n8f-path__number">02</span>
+          <div class="n8f-path__icon n8f-path__icon--violet" aria-hidden="true">◇</div>
+          <p>Forging next</p>
+          <h3>Faith Collection</h3>
+          <span>Purpose-driven designs with a permanent home beyond the Costa Rica campaign.</span>
+        </article>
+        <article class="n8f-path">
+          <span class="n8f-path__number">03</span>
+          <div class="n8f-path__icon n8f-path__icon--orange" aria-hidden="true">⬡</div>
+          <p>Future release</p>
+          <h3>3D + digital</h3>
+          <span>Physical prints, downloadable STL files, and useful digital creations.</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="n8f-manifesto" aria-label="N8Forged brand statement">
+    <div class="n8f-shell n8f-manifesto__inner">
+      <p>Not mass produced thinking.</p>
+      <h2>Made from an idea.<br><em>Forged for a purpose.</em></h2>
+      <a class="n8f-button n8f-button--secondary" href="{{ section.settings.primary_link }}">Explore the launch</a>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "N8Forged homepage",
+  "tag": "section",
+  "class": "n8forged-home-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "N8Forged / Costa Rica Mission"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Wear the mission. Help move it forward."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Introduction",
+      "default": "<p>This first N8Forged collection is built to help fund a mission trip to Costa Rica. Your purchase supports the journey—and helps launch what comes next.</p>"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary button label",
+      "default": "Shop the mission"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button label",
+      "default": "Why Costa Rica"
+    },
+    {
+      "type": "text",
+      "id": "mission_heading",
+      "label": "Mission heading",
+      "default": "A journey worth building toward."
+    },
+    {
+      "type": "richtext",
+      "id": "mission_body",
+      "label": "Mission description",
+      "default": "<p>N8Forged begins with a simple goal: turn original ideas into real support for a mission trip to Costa Rica. Every order helps create momentum for the journey while laying the foundation for a lasting creative brand.</p>"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Launch collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Products to show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "N8Forged homepage"
+    }
+  ]
+}
+{% endschema %}
