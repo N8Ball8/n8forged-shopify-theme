@@ -1,0 +1,15 @@
+.git/
+.github/
+.cursor/
+docs/
+.env
+.env.*
+.gitignore
+.shopifyignore
+.theme-check.yml
+AGENTS.md
+CONTRIBUTING.md
+LICENSE.md
+README.md
+SECURITY.md
+release-notes.md

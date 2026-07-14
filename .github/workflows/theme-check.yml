@@ -1,0 +1,38 @@
+name: Theme Check
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+  push:
+    branches:
+      - development
+      - main
+
+concurrency:
+  group: theme-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  theme-check:
+    name: Theme Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Validate Shopify theme
+        uses: shopify/theme-check-action@58fd69afdfc30110f997ba9e212b302671e00d3b # v2.2.0
+        with:
+          theme_root: .
+          version: 4.5.1
+          token: ${{ github.token }}
+          base: ${{ github.event.pull_request.base.sha || github.event.before }}
