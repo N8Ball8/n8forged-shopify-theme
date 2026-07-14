@@ -25,7 +25,7 @@
 .n8f-orb { position: absolute; border-radius: 999px; z-index: -2; filter: blur(10px); pointer-events: none; }
 .n8f-orb--blue { width: 520px; height: 520px; right: 8%; top: 14%; background: radial-gradient(circle, rgb(21 155 255 / 28%), rgb(21 94 239 / 5%) 55%, transparent 72%); }
 .n8f-orb--violet { width: 320px; height: 320px; left: -10%; bottom: 0; background: radial-gradient(circle, rgb(139 92 246 / 12%), transparent 70%); }
-.n8f-hero__inner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(380px, .95fr); gap: clamp(48px, 8vw, 120px); align-items: center; padding-block: clamp(90px, 12vw, 170px); }
+.n8f-hero__inner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(380px, .95fr); gap: clamp(48px, 8vw, 120px); align-items: center; padding-block: clamp(68px, 8vw, 118px) clamp(82px, 10vw, 140px); }
 .n8f-eyebrow, .n8f-kicker { color: var(--n8f-cyan); text-transform: uppercase; letter-spacing: .16em; font-size: 12px; font-weight: 700; }
 .n8f-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
 .n8f-eyebrow span { width: 34px; height: 1px; background: var(--n8f-cyan); box-shadow: 0 0 14px var(--n8f-cyan); }
@@ -110,7 +110,7 @@
 
 @media (max-width: 599px) {
   .n8f-shell { width: min(100% - 28px, 1280px); }
-  .n8f-hero__inner { gap: 48px; padding-block: 72px 80px; }
+  .n8f-hero__inner { gap: 48px; padding-block: 54px 72px; }
   .n8f-hero h1 { font-size: clamp(44px, 14vw, 66px); }
   .n8f-actions { display: grid; }
   .n8f-button { width: 100%; }
