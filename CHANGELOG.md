@@ -9,6 +9,8 @@ All notable N8Forged theme changes will be documented here. Versions follow
 
 - Repeatable local validation and preview commands.
 - Development, release, rollback, and architecture-decision documentation.
+- Weekly non-destructive Horizon upstream monitoring.
+- Monthly Shopify CLI and GitHub Actions dependency maintenance.
 
 ## [0.1.0] - 2026-07-14
 

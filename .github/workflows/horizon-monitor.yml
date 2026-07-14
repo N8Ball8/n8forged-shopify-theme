@@ -1,0 +1,37 @@
+name: Horizon Upstream Monitor
+
+on:
+  schedule:
+    - cron: "17 14 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: horizon-upstream-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-upstream:
+    name: Check Horizon upstream
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out production source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch official Horizon
+        run: |
+          git remote add horizon https://github.com/Shopify/horizon.git
+          git fetch --no-tags horizon main
+
+      - name: Open or update maintenance issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash .github/scripts/check-horizon-upstream.sh
