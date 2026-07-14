@@ -10,6 +10,7 @@ Describe what changed and why.
 ## Validation
 
 - [ ] Theme files were checked for syntax and schema errors.
+- [ ] `npm run theme:check` passes locally.
 - [ ] The change was previewed on a non-production theme.
 - [ ] Mobile and desktop behavior were reviewed when applicable.
 - [ ] No credentials, customer data, or environment files are included.
@@ -18,3 +19,8 @@ Describe what changed and why.
 ## Shopify impact
 
 Note any theme-editor settings, app blocks, templates, or merchant content affected by this change.
+
+## Release and rollback
+
+For release pull requests, state the version, smoke-test plan, and known-good
+rollback target. Write `Not applicable` for feature pull requests.
