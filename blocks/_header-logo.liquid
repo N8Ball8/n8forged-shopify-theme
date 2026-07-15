@@ -52,18 +52,32 @@
   <span
     class="header-logo__image-container header-logo__image-container--original"
     data-testid="header-logo"
+    {% if settings.logo == blank %}
+      style="--header-logo-image-width: {{ settings.logo_height }}px; --header-logo-image-width-mobile: {{ settings.logo_height_mobile }}px; --header-logo-image-height: {{ settings.logo_height }}px; --header-logo-image-height-mobile: {{ settings.logo_height_mobile }}px;"
+    {% endif %}
   >
-    {% render 'image',
-      image: settings.logo,
-      class: 'header-logo__image',
-      height: settings.logo_height,
-      alt_text_fallback: alt_text_fallback,
-      text_fallback: shop.name,
-      style: logo_style
-    %}
+    {% if settings.logo == blank %}
+      <img
+        src="{{ 'n8forged-mark-approved.png' | asset_url }}"
+        class="header-logo__image n8forged-header-mark"
+        width="{{ settings.logo_height }}"
+        height="{{ settings.logo_height }}"
+        alt="{{ alt_text_fallback | escape }}"
+      >
+      <span class="n8forged-header-wordmark">N<span class="n8forged-header-wordmark__eight">8</span>FORGED</span>
+    {% else %}
+      {% render 'image',
+        image: settings.logo,
+        class: 'header-logo__image',
+        height: settings.logo_height,
+        alt_text_fallback: alt_text_fallback,
+        text_fallback: shop.name,
+        style: logo_style
+      %}
+    {% endif %}
   </span>
 
-  {% if use_inverse_logo %}
+  {% if use_inverse_logo and settings.logo != blank %}
     <span
       class="header-logo__image-container header-logo__image-container--inverse"
       data-testid="header-logo-inverse"
@@ -115,6 +129,43 @@
 
     &:hover {
       text-decoration: none;
+    }
+  }
+
+  .n8forged-header-mark {
+    flex: 0 0 auto;
+    width: var(--header-logo-image-height);
+    height: var(--header-logo-image-height);
+  }
+
+  .header-logo__image-container:has(.n8forged-header-mark) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .n8forged-header-wordmark {
+    margin-inline-start: 0.65rem;
+    color: currentcolor;
+    font-family: var(--font-heading--family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    line-height: 1;
+  }
+
+  .n8forged-header-wordmark__eight {
+    color: #2563eb;
+  }
+
+  @media screen and (max-width: 749px) {
+    .n8forged-header-mark {
+      width: var(--header-logo-image-height-mobile);
+      height: var(--header-logo-image-height-mobile);
+    }
+
+    .n8forged-header-wordmark {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
     }
   }
 
