@@ -15,6 +15,10 @@ body {
   background: var(--n8f-bg);
 }
 
+.content-for-layout {
+  flex: 1 0 auto;
+}
+
 #header-group {
   border-bottom: 1px solid var(--n8f-border);
   box-shadow: 0 10px 40px rgb(0 0 0 / 18%);
