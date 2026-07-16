@@ -10,7 +10,8 @@
     "shopify:login": "shopify auth login",
     "theme:check": "shopify theme check",
     "theme:dev": "shopify theme dev --store n8forged.myshopify.com",
-    "theme:list": "shopify theme list --store n8forged.myshopify.com"
+    "theme:list": "shopify theme list --store n8forged.myshopify.com",
+    "audit:catalog": "node scripts/audit-printify-shopify.mjs"
   },
   "devDependencies": {
     "@shopify/cli": "4.5.1"
