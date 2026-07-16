@@ -1,0 +1,24 @@
+{
+  "id": "https://n8forged.com/",
+  "name": "N8Forged",
+  "short_name": "N8Forged",
+  "start_url": "https://n8forged.com/",
+  "scope": "https://n8forged.com/",
+  "display": "standalone",
+  "background_color": "#05070c",
+  "theme_color": "#05070c",
+  "icons": [
+    {
+      "src": "n8forged-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "n8forged-app-icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
