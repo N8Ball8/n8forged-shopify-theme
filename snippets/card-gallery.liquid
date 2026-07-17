@@ -125,6 +125,7 @@
       endif
 
       assign verified_media_positions = ''
+      assign verified_media_order = ''
       if product.handle == 'poor-reception-graphic-t-shirt'
         case initial_color
           when 'Athletic Heather'
@@ -177,36 +178,74 @@
           when 'Berry'
             assign verified_media_positions = ',15,59,60,61,'
         endcase
+      elsif product.handle == 'every-name-hoodie'
+        case initial_color
+          when 'White'
+            assign verified_media_order = '1,16,13,14,17,15'
+          when 'Black'
+            assign verified_media_order = '2,18,19,20,22,21'
+          when 'Sand'
+            assign verified_media_order = '3,23,24,25,26,27'
+          when 'Sport Grey'
+            assign verified_media_order = '4,32,28,29,30,31'
+          when 'Maroon'
+            assign verified_media_order = '5,33,34,35,36,37'
+          when 'Dark Chocolate'
+            assign verified_media_order = '6,38,39,40,42,41'
+          when 'Dark Heather'
+            assign verified_media_order = '7,43,44,46,47,45'
+          when 'Light Blue'
+            assign verified_media_order = '8,48,49,50,53,51,52'
+          when 'Royal'
+            assign verified_media_order = '9,54,55,56,57,58'
+          when 'Navy'
+            assign verified_media_order = '10,59,60,61,62,63'
+          when 'Light Pink'
+            assign verified_media_order = '11,64,65,66,68,67'
+          when 'Red'
+            assign verified_media_order = '12,69,70,73,71,72'
+        endcase
+        assign verified_media_positions = verified_media_order | prepend: ',' | append: ','
       endif
 
-      assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
-      assign additional_image_index = 0
-      for media in product.media
-        if media.id == initial_featured_media.id
-          continue
-        endif
-
-        assign include_media = false
-        assign media_position_key = media.position | append: ',' | prepend: ','
-        if verified_media_positions contains media_position_key
-          assign include_media = true
-        elsif media.media_type == 'image' and variant_images contains media.src
-          assign include_media = false
-        elsif media.media_type == 'image'
-          if mockups_per_color > 0 and selected_mockup_group_index != nil
-            assign mockup_color_index = additional_image_index | divided_by: mockups_per_color
-            if mockup_color_index == selected_mockup_group_index
-              assign include_media = true
-            endif
-          endif
-          assign additional_image_index = additional_image_index | plus: 1
-        endif
-
-        if include_media
-          assign found_media = product.media | where: 'id', media.id
+      if verified_media_order != blank
+        assign media_list_to_show = '' | split: ','
+        assign ordered_media_positions = verified_media_order | split: ','
+        for ordered_position in ordered_media_positions
+          assign media_index = ordered_position | minus: 1
+          assign found_media = product.media | slice: media_index, 1
           assign media_list_to_show = media_list_to_show | concat: found_media
-        endif
-      endfor
+        endfor
+      else
+        assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
+        assign additional_image_index = 0
+        for media in product.media
+          if media.id == initial_featured_media.id
+            continue
+          endif
+
+          assign include_media = false
+          assign media_position_key = media.position | append: ',' | prepend: ','
+          if verified_media_positions contains media_position_key
+            assign include_media = true
+          elsif media.media_type == 'image' and variant_images contains media.src
+            assign include_media = false
+          elsif media.media_type == 'image'
+            if mockups_per_color > 0 and selected_mockup_group_index != nil
+              assign mockup_color_index = additional_image_index | divided_by: mockups_per_color
+              if mockup_color_index == selected_mockup_group_index
+                assign include_media = true
+              endif
+            endif
+            assign additional_image_index = additional_image_index | plus: 1
+          endif
+
+          if include_media
+            assign found_media = product.media | where: 'id', media.id
+            assign media_list_to_show = media_list_to_show | concat: found_media
+          endif
+        endfor
+      endif
 
       if media_list_to_show.size > 1
         assign show_arrows = true
