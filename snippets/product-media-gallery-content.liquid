@@ -144,8 +144,7 @@
     assign use_synchronized_media_map = false
     assign synchronized_media_positions = ''
     assign synchronized_media_map = selected_product.metafields.n8f.media_color_map.value
-    if synchronized_media_map.matchMethod == 'perceptual-v1'
-      and synchronized_media_map.imageCount == selected_product.images.size
+    if synchronized_media_map.matchMethod == 'perceptual-v1' and synchronized_media_map.imageCount == selected_product.images.size
       assign use_synchronized_media_map = true
       assign synchronized_media_positions = synchronized_media_map.colors[selected_color]
     endif
