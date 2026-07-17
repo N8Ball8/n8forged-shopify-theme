@@ -1,4 +1,5 @@
 import process from 'node:process';
+import { createHash } from 'node:crypto';
 import { buildPrintifyMediaColorMap } from './lib/media-color-map.mjs';
 
 const PRINTIFY_API = 'https://api.printify.com/v1';
@@ -18,6 +19,66 @@ async function requestJson(url, options = {}) {
   const response = await fetch(url, options);
   if (!response.ok) throw new Error(`${response.status} for ${url}: ${await response.text()}`);
   return response.status === 204 ? null : response.json();
+}
+
+async function requestBuffer(url, attempts = 4) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) return Buffer.from(await response.arrayBuffer());
+      lastError = new Error(`${response.status} for ${url}`);
+      if (response.status < 500 && response.status !== 429) throw lastError;
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, attempt * 750));
+  }
+  throw lastError;
+}
+
+async function mapWithConcurrency(items, limit, mapper) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex;
+      nextIndex += 1;
+      results[index] = await mapper(items[index], index);
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+async function digestImages(images, getUrl) {
+  return mapWithConcurrency(images, 6, async (image) => {
+    const buffer = await requestBuffer(getUrl(image));
+    return createHash('sha256').update(buffer).digest('hex');
+  });
+}
+
+async function matchShopifyImagePositions(printifyImages, shopifyImages) {
+  const [printifyDigests, shopifyDigests] = await Promise.all([
+    digestImages(printifyImages, (image) => image.src),
+    digestImages(shopifyImages, (image) => image.url),
+  ]);
+  const positionsByDigest = new Map();
+
+  shopifyDigests.forEach((digest, index) => {
+    const positions = positionsByDigest.get(digest) || [];
+    positions.push(index + 1);
+    positionsByDigest.set(digest, positions);
+  });
+
+  const positions = printifyDigests.map((digest) => positionsByDigest.get(digest)?.shift() || null);
+  const unmatched = positions.filter((position) => position === null).length;
+  if (unmatched) {
+    throw new Error(`${unmatched} of ${positions.length} Printify images could not be matched to Shopify by identity.`);
+  }
+  return positions;
 }
 
 async function printify(path) {
@@ -81,7 +142,12 @@ async function getShopifyProduct(handle, shopifyToken) {
         product: productByIdentifier(identifier: $identifier) {
           id
           media(first: 250) {
-            nodes { id }
+            nodes {
+              id
+              ... on MediaImage {
+                image { url }
+              }
+            }
           }
         }
       }
@@ -94,7 +160,7 @@ async function getShopifyProduct(handle, shopifyToken) {
 
   return {
     id: data.product.id.split('/').pop(),
-    images: data.product.media.nodes,
+    images: data.product.media.nodes.filter((media) => media.image?.url),
   };
 }
 
@@ -147,7 +213,8 @@ for (const summary of summaries) {
 
   try {
     const shopifyProduct = await getShopifyProduct(handle, shopifyToken);
-    const mediaMap = buildPrintifyMediaColorMap(printifyProduct, shopifyProduct);
+    const imagePositions = await matchShopifyImagePositions(printifyProduct.images || [], shopifyProduct.images);
+    const mediaMap = buildPrintifyMediaColorMap(printifyProduct, shopifyProduct, imagePositions);
     await setMediaMap(shopifyProduct.id, { ...mediaMap, syncedAt: new Date().toISOString() }, shopifyToken);
     results.push({ handle, status: 'synced', colors: Object.keys(mediaMap.colors).length });
   } catch (error) {
