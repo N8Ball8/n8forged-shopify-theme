@@ -67,3 +67,16 @@ test('recognizes Printify color options by type when the display name is provide
 
   assert.deepEqual(result.colors, { Navy: [1] });
 });
+
+test('uses verified Shopify positions instead of assuming Printify and Shopify image order match', () => {
+  const printifyProduct = {
+    id: 'reordered-images',
+    options: [{ name: 'Color', type: 'color', values: [{ id: 1, title: 'Red' }, { id: 2, title: 'Royal' }] }],
+    variants: [{ id: 10, options: [1] }, { id: 20, options: [2] }],
+    images: [{ variant_ids: [10] }, { variant_ids: [20] }],
+  };
+
+  const result = buildPrintifyMediaColorMap(printifyProduct, { images: [{}, {}] }, [2, 1]);
+
+  assert.deepEqual(result.colors, { Red: [2], Royal: [1] });
+});
