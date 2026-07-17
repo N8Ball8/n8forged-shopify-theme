@@ -16,6 +16,7 @@
     "test:media-maps": "node --test scripts/lib/media-color-map.test.mjs"
   },
   "devDependencies": {
-    "@shopify/cli": "4.5.1"
+    "@shopify/cli": "4.5.1",
+    "sharp": "^0.35.3"
   }
 }

@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { createHash } from 'node:crypto';
+import sharp from 'sharp';
 import { buildPrintifyMediaColorMap } from './lib/media-color-map.mjs';
 
 const PRINTIFY_API = 'https://api.printify.com/v1';
@@ -53,32 +53,65 @@ async function mapWithConcurrency(items, limit, mapper) {
   return results;
 }
 
-async function digestImages(images, getUrl) {
+async function fingerprintImages(images, getUrl) {
   return mapWithConcurrency(images, 6, async (image) => {
     const buffer = await requestBuffer(getUrl(image));
-    return createHash('sha256').update(buffer).digest('hex');
+    return sharp(buffer)
+      .resize(24, 24, { fit: 'fill' })
+      .removeAlpha()
+      .raw()
+      .toBuffer();
   });
 }
 
+function pixelDistance(left, right) {
+  if (left.length !== right.length) return Number.POSITIVE_INFINITY;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    difference += Math.abs(left[index] - right[index]);
+  }
+  return difference / left.length;
+}
+
 async function matchShopifyImagePositions(printifyImages, shopifyImages) {
-  const [printifyDigests, shopifyDigests] = await Promise.all([
-    digestImages(printifyImages, (image) => image.src),
-    digestImages(shopifyImages, (image) => image.url),
+  const [printifyFingerprints, shopifyFingerprints] = await Promise.all([
+    fingerprintImages(printifyImages, (image) => image.src),
+    fingerprintImages(shopifyImages, (image) => image.url),
   ]);
-  const positionsByDigest = new Map();
-
-  shopifyDigests.forEach((digest, index) => {
-    const positions = positionsByDigest.get(digest) || [];
-    positions.push(index + 1);
-    positionsByDigest.set(digest, positions);
+  const candidates = [];
+  printifyFingerprints.forEach((printifyFingerprint, printifyIndex) => {
+    shopifyFingerprints.forEach((shopifyFingerprint, shopifyIndex) => {
+      candidates.push({
+        printifyIndex,
+        shopifyIndex,
+        distance: pixelDistance(printifyFingerprint, shopifyFingerprint),
+      });
+    });
   });
+  candidates.sort((left, right) => left.distance - right.distance);
 
-  const positions = printifyDigests.map((digest) => positionsByDigest.get(digest)?.shift() || null);
+  const positions = new Array(printifyImages.length).fill(null);
+  const usedShopifyIndexes = new Set();
+  const acceptedDistances = [];
+  for (const candidate of candidates) {
+    if (positions[candidate.printifyIndex] !== null || usedShopifyIndexes.has(candidate.shopifyIndex)) continue;
+    positions[candidate.printifyIndex] = candidate.shopifyIndex + 1;
+    usedShopifyIndexes.add(candidate.shopifyIndex);
+    acceptedDistances.push(candidate.distance);
+  }
+
   const unmatched = positions.filter((position) => position === null).length;
   if (unmatched) {
-    throw new Error(`${unmatched} of ${positions.length} Printify images could not be matched to Shopify by identity.`);
+    throw new Error(`${unmatched} of ${positions.length} Printify images could not be matched one-to-one.`);
   }
-  return positions;
+  const maxDistance = Math.max(...acceptedDistances);
+  const averageDistance = acceptedDistances.reduce((sum, distance) => sum + distance, 0) / acceptedDistances.length;
+  if (maxDistance > 18) {
+    throw new Error(
+      `Perceptual image match confidence is too low: max distance ${maxDistance.toFixed(2)}, average ${averageDistance.toFixed(2)}.`
+    );
+  }
+  return { positions, maxDistance, averageDistance };
 }
 
 async function printify(path) {
@@ -215,10 +248,26 @@ for (const summary of summaries) {
 
   try {
     const shopifyProduct = await getShopifyProduct(handle, shopifyToken);
-    const imagePositions = await matchShopifyImagePositions(printifyProduct.images || [], shopifyProduct.images);
-    const mediaMap = buildPrintifyMediaColorMap(printifyProduct, shopifyProduct, imagePositions);
-    await setMediaMap(shopifyProduct.id, { ...mediaMap, syncedAt: new Date().toISOString() }, shopifyToken);
-    results.push({ handle, status: 'synced', colors: Object.keys(mediaMap.colors).length });
+    const imageMatch = await matchShopifyImagePositions(printifyProduct.images || [], shopifyProduct.images);
+    const mediaMap = buildPrintifyMediaColorMap(printifyProduct, shopifyProduct, imageMatch.positions);
+    await setMediaMap(
+      shopifyProduct.id,
+      {
+        ...mediaMap,
+        matchMethod: 'perceptual-v1',
+        maxDistance: Number(imageMatch.maxDistance.toFixed(2)),
+        averageDistance: Number(imageMatch.averageDistance.toFixed(2)),
+        syncedAt: new Date().toISOString(),
+      },
+      shopifyToken
+    );
+    results.push({
+      handle,
+      status: 'synced',
+      colors: Object.keys(mediaMap.colors).length,
+      maxDistance: imageMatch.maxDistance.toFixed(2),
+      averageDistance: imageMatch.averageDistance.toFixed(2),
+    });
   } catch (error) {
     results.push({ handle, status: 'skipped', reason: error.message });
   }
