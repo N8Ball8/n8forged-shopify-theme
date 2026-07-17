@@ -1,0 +1,45 @@
+{% # theme-check-disable ValidScopedCSSClass %}
+<div data-n8f-family-options>
+  {% for family_product in collection.products %}
+    {% liquid
+      assign style_name = ''
+      for product_tag in family_product.tags
+        assign product_tag_key = product_tag | downcase | strip
+        assign product_tag_prefix = product_tag_key | slice: 0, 10
+        if product_tag_prefix == 'n8f-style-'
+          capture style_name
+            render 'n8f-style-name', style_tag: product_tag_key
+          endcapture
+          assign style_name = style_name | strip
+          break
+        endif
+      endfor
+      if style_name == blank
+        assign normalized_product_title = family_product.title | downcase
+        if normalized_product_title contains 'premium'
+          assign style_name = 'Premium'
+        elsif normalized_product_title contains 'classic'
+          assign style_name = 'Classic'
+        endif
+      endif
+    %}
+    {% if style_name != blank %}
+      <a
+        class="n8f-shirt-style-selector__option"
+        href="{{ family_product.url }}"
+        data-product-handle="{{ family_product.handle }}"
+      >
+        <span>{{ style_name }}</span>
+        <small>{% if family_product.price_varies %}From {% endif %}{{ family_product.price | money }}</small>
+      </a>
+    {% endif %}
+  {% endfor %}
+</div>
+{% # theme-check-enable ValidScopedCSSClass %}
+
+{% schema %}
+{
+  "name": "N8F family products",
+  "settings": []
+}
+{% endschema %}
