@@ -5,12 +5,14 @@ const PRINTIFY_API = 'https://api.printify.com/v1';
 const SHOPIFY_API_VERSION = '2026-04';
 const printifyToken = process.env.PRINTIFY_API_TOKEN;
 const configuredShopId = process.env.PRINTIFY_SHOP_ID;
-const shopifyToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+const shopifyClientId = process.env.SHOPIFY_CLIENT_ID;
+const shopifyClientSecret = process.env.SHOPIFY_CLIENT_SECRET;
 const shopifyStore = process.env.SHOPIFY_STORE_DOMAIN || 'n8forged.myshopify.com';
 const storefrontOrigin = (process.env.SHOPIFY_STOREFRONT_ORIGIN || 'https://n8forged.com').replace(/\/$/, '');
 
 if (!printifyToken) throw new Error('PRINTIFY_API_TOKEN is required.');
-if (!shopifyToken) throw new Error('SHOPIFY_ADMIN_ACCESS_TOKEN is required.');
+if (!shopifyClientId) throw new Error('SHOPIFY_CLIENT_ID is required.');
+if (!shopifyClientSecret) throw new Error('SHOPIFY_CLIENT_SECRET is required.');
 
 async function requestJson(url, options = {}) {
   const response = await fetch(url, options);
@@ -43,6 +45,21 @@ async function getProducts(shopId) {
   }
 }
 
+async function getShopifyAccessToken() {
+  const response = await requestJson(`https://${shopifyStore}/admin/oauth/access_token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      grant_type: 'client_credentials',
+      client_id: shopifyClientId,
+      client_secret: shopifyClientSecret,
+    }),
+  });
+
+  if (!response.access_token) throw new Error('Shopify did not return an access token.');
+  return response.access_token;
+}
+
 function getShopifyHandle(product) {
   const handle = product.external?.handle;
   if (!handle) return null;
@@ -50,7 +67,7 @@ function getShopifyHandle(product) {
   return match?.[1] || null;
 }
 
-async function setMediaMap(productId, value) {
+async function setMediaMap(productId, value, shopifyToken) {
   const query = `
     mutation SetMediaColorMap($metafields: [MetafieldsSetInput!]!) {
       metafieldsSet(metafields: $metafields) {
@@ -85,6 +102,7 @@ async function setMediaMap(productId, value) {
 }
 
 const shopId = await getShopId();
+const shopifyToken = await getShopifyAccessToken();
 const summaries = await getProducts(shopId);
 const results = [];
 
@@ -98,7 +116,7 @@ for (const summary of summaries) {
   const shopifyProduct = await requestJson(`${storefrontOrigin}/products/${handle}.js`);
   try {
     const mediaMap = buildPrintifyMediaColorMap(printifyProduct, shopifyProduct);
-    await setMediaMap(shopifyProduct.id, { ...mediaMap, syncedAt: new Date().toISOString() });
+    await setMediaMap(shopifyProduct.id, { ...mediaMap, syncedAt: new Date().toISOString() }, shopifyToken);
     results.push({ handle, status: 'synced', colors: Object.keys(mediaMap.colors).length });
   } catch (error) {
     results.push({ handle, status: 'skipped', reason: error.message });
