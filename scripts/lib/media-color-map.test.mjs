@@ -54,3 +54,16 @@ test('refuses to write a stale map while Shopify and Printify image counts diffe
     /Image count mismatch/
   );
 });
+
+test('recognizes Printify color options by type when the display name is provider-specific', () => {
+  const printifyProduct = {
+    id: 'provider-specific-option',
+    options: [{ name: 'Shade', type: 'color', values: [{ id: 7, title: 'Navy' }] }],
+    variants: [{ id: 70, options: [7] }],
+    images: [{ variant_ids: [70] }],
+  };
+
+  const result = buildPrintifyMediaColorMap(printifyProduct, { images: [{}] });
+
+  assert.deepEqual(result.colors, { Navy: [1] });
+});
