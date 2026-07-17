@@ -49,7 +49,7 @@ async function getProducts(shopId) {
   let page = 1;
 
   while (true) {
-    const response = await printify(`/shops/${shopId}/products.json?limit=100&page=${page}`);
+    const response = await printify(`/shops/${shopId}/products.json?limit=50&page=${page}`);
     products.push(...response.data);
     if (page >= response.last_page) break;
     page += 1;
