@@ -23,6 +23,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install audit dependencies
+        run: npm ci
+
       - name: Compare Printify with Shopify
         id: audit
         continue-on-error: true
