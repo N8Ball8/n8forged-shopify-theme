@@ -2,7 +2,7 @@ function normalizeOptionName(value) {
   return String(value || '').trim().toLowerCase();
 }
 
-export function buildPrintifyMediaColorMap(printifyProduct, shopifyProduct) {
+export function buildPrintifyMediaColorMap(printifyProduct, shopifyProduct, imagePositions = null) {
   const options = printifyProduct.options || [];
   const colorOptionIndex = options.findIndex((option) => {
     const name = normalizeOptionName(option.name);
@@ -44,7 +44,7 @@ export function buildPrintifyMediaColorMap(printifyProduct, shopifyProduct) {
   const shared = [];
 
   printifyImages.forEach((image, index) => {
-    const position = index + 1;
+    const position = imagePositions?.[index] ?? index + 1;
     const imageColors = [
       ...new Set((image.variant_ids || []).map((id) => variantColors.get(String(id))).filter(Boolean)),
     ];
