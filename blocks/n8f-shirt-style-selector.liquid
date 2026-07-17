@@ -1,0 +1,94 @@
+{% liquid
+  assign family_tag = ''
+  assign current_style = ''
+
+  for product_tag in closest.product.tags
+    assign product_tag_key = product_tag | downcase | strip
+    assign family_tag_prefix = product_tag_key | slice: 0, 11
+    assign style_tag_prefix = product_tag_key | slice: 0, 10
+    if family_tag_prefix == 'n8f-family-'
+      assign family_tag = product_tag_key
+    elsif style_tag_prefix == 'n8f-style-' and current_style == blank
+      capture current_style
+        render 'n8f-style-name', style_tag: product_tag_key
+      endcapture
+      assign current_style = current_style | strip
+    endif
+  endfor
+
+  if current_style == blank
+    assign normalized_product_title = closest.product.title | downcase
+    if normalized_product_title contains 'premium'
+      assign current_style = 'Premium'
+    elsif normalized_product_title contains 'classic'
+      assign current_style = 'Classic'
+    endif
+  endif
+%}
+
+{% if family_tag != blank and current_style != blank %}
+  <script src="{{ 'n8f-shirt-style-selector.js' | asset_url }}" type="module"></script>
+  <n8f-shirt-style-selector
+    class="n8f-shirt-style-selector"
+    data-family-tag="{{ family_tag }}"
+    data-current-handle="{{ closest.product.handle }}"
+    {{ block.shopify_attributes }}
+  >
+    <span class="n8f-shirt-style-selector__label">Style</span>
+    <div class="n8f-shirt-style-selector__options" data-n8f-style-options>
+      <a
+        class="n8f-shirt-style-selector__option n8f-shirt-style-selector__option--selected"
+        href="{{ closest.product.url }}"
+        aria-current="true"
+      >
+        <span>{{ current_style }}</span>
+        <small>{% if closest.product.price_varies %}From {% endif %}{{ closest.product.price | money }}</small>
+      </a>
+    </div>
+  </n8f-shirt-style-selector>
+{% endif %}
+
+{% stylesheet %}
+  .n8f-shirt-style-selector {
+    display: grid;
+    gap: 10px;
+  }
+
+  .n8f-shirt-style-selector__label {
+    font-size: var(--font-size--sm);
+  }
+
+  .n8f-shirt-style-selector__options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .n8f-shirt-style-selector__option {
+    display: grid;
+    min-height: 58px;
+    padding: 9px 14px;
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.28);
+    place-content: center;
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .n8f-shirt-style-selector__option--selected {
+    border-color: rgb(var(--color-foreground-rgb));
+    background: rgb(var(--color-foreground-rgb));
+    color: rgb(var(--color-background-rgb));
+  }
+
+  .n8f-shirt-style-selector__option small {
+    opacity: 0.72;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Style selector",
+  "settings": []
+}
+{% endschema %}
