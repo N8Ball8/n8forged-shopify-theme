@@ -1,0 +1,45 @@
+{%- liquid
+  assign default_url = product.url
+  assign default_color = ''
+
+  for product_tag in product.tags
+    assign normalized_tag = product_tag | downcase
+    if normalized_tag contains 'n8f-default-color-'
+      assign default_color = normalized_tag | remove_first: 'n8f-default-color-' | remove: '-' | remove: ' '
+      break
+    endif
+  endfor
+
+  if default_color != blank
+    assign color_option_index = nil
+    for product_option in product.options_with_values
+      assign normalized_option_name = product_option.name | downcase
+      if normalized_option_name == 'color' or normalized_option_name == 'colour'
+        assign color_option_index = product_option.position | minus: 1
+        break
+      endif
+    endfor
+
+    if color_option_index != nil
+      assign fallback_variant = nil
+      for product_variant in product.variants
+        assign variant_color = product_variant.options[color_option_index] | downcase | remove: '-' | remove: ' '
+        if variant_color == default_color
+          if fallback_variant == nil
+            assign fallback_variant = product_variant
+          endif
+          if product_variant.available
+            assign default_url = product_variant.url
+            break
+          endif
+        endif
+      endfor
+
+      if default_url == product.url and fallback_variant != nil
+        assign default_url = fallback_variant.url
+      endif
+    endif
+  endif
+
+  echo default_url
+-%}
