@@ -121,7 +121,10 @@
 
       assign mockups_per_color = 0
       if variant_images.size > 0 and additional_image_count > 0
-        assign mockups_per_color = additional_image_count | divided_by: variant_images.size
+        assign ungrouped_mockup_count = additional_image_count | modulo: variant_images.size
+        if ungrouped_mockup_count == 0
+          assign mockups_per_color = additional_image_count | divided_by: variant_images.size
+        endif
       endif
 
       assign verified_media_positions = ''

@@ -221,7 +221,10 @@
     assign additional_image_count = selected_product.images.size | minus: variant_images.size
     assign mockups_per_color = 0
     if color_count > 0 and additional_image_count > 0
-      assign mockups_per_color = additional_image_count | divided_by: color_count
+      assign ungrouped_mockup_count = additional_image_count | modulo: color_count
+      if ungrouped_mockup_count == 0
+        assign mockups_per_color = additional_image_count | divided_by: color_count
+      endif
     endif
 
     assign selected_color_key = selected_color | downcase | prepend: 'color:'
