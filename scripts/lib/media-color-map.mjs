@@ -6,7 +6,15 @@ export function buildPrintifyMediaColorMap(printifyProduct, shopifyProduct) {
   const options = printifyProduct.options || [];
   const colorOptionIndex = options.findIndex((option) => {
     const name = normalizeOptionName(option.name);
-    return name === 'color' || name === 'colour' || name === 'colors' || name === 'colours';
+    const type = normalizeOptionName(option.type);
+    return (
+      name === 'color' ||
+      name === 'colour' ||
+      name === 'colors' ||
+      name === 'colours' ||
+      type === 'color' ||
+      type === 'colour'
+    );
   });
 
   if (colorOptionIndex < 0) {
