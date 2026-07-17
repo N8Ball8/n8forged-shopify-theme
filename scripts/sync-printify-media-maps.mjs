@@ -60,6 +60,44 @@ async function getShopifyAccessToken() {
   return response.access_token;
 }
 
+async function shopifyGraphql(query, variables, shopifyToken) {
+  const response = await requestJson(`https://${shopifyStore}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': shopifyToken,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (response.errors?.length) throw new Error(`Shopify GraphQL error: ${JSON.stringify(response.errors)}`);
+  return response.data;
+}
+
+async function getShopifyProduct(handle, shopifyToken) {
+  const data = await shopifyGraphql(
+    `
+      query ProductForMediaMap($identifier: ProductIdentifierInput!) {
+        product: productByIdentifier(identifier: $identifier) {
+          id
+          media(first: 250) {
+            nodes { id }
+          }
+        }
+      }
+    `,
+    { identifier: { handle } },
+    shopifyToken
+  );
+
+  if (!data.product) throw new Error(`Shopify product not found for handle ${handle}.`);
+
+  return {
+    id: data.product.id.split('/').pop(),
+    images: data.product.media.nodes,
+  };
+}
+
 function getShopifyHandle(product) {
   const handle = product.external?.handle;
   if (!handle) return null;
@@ -75,29 +113,23 @@ async function setMediaMap(productId, value, shopifyToken) {
       }
     }
   `;
-  const data = await requestJson(`https://${shopifyStore}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': shopifyToken,
+  const data = await shopifyGraphql(
+    query,
+    {
+      metafields: [
+        {
+          ownerId: `gid://shopify/Product/${productId}`,
+          namespace: 'n8f',
+          key: 'media_color_map',
+          type: 'json',
+          value: JSON.stringify(value),
+        },
+      ],
     },
-    body: JSON.stringify({
-      query,
-      variables: {
-        metafields: [
-          {
-            ownerId: `gid://shopify/Product/${productId}`,
-            namespace: 'n8f',
-            key: 'media_color_map',
-            type: 'json',
-            value: JSON.stringify(value),
-          },
-        ],
-      },
-    }),
-  });
+    shopifyToken
+  );
 
-  const errors = data.errors || data.data?.metafieldsSet?.userErrors || [];
+  const errors = data.metafieldsSet?.userErrors || [];
   if (errors.length) throw new Error(`Shopify metafield error: ${JSON.stringify(errors)}`);
 }
 
@@ -113,8 +145,8 @@ for (const summary of summaries) {
   const handle = getShopifyHandle(printifyProduct);
   if (!handle) continue;
 
-  const shopifyProduct = await requestJson(`${storefrontOrigin}/products/${handle}.js`);
   try {
+    const shopifyProduct = await getShopifyProduct(handle, shopifyToken);
     const mediaMap = buildPrintifyMediaColorMap(printifyProduct, shopifyProduct);
     await setMediaMap(shopifyProduct.id, { ...mediaMap, syncedAt: new Date().toISOString() }, shopifyToken);
     results.push({ handle, status: 'synced', colors: Object.keys(mediaMap.colors).length });
