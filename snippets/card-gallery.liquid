@@ -13,6 +13,30 @@
   assign block_settings = block.settings
   assign image_sizes = '(min-width: 750px) 50vw, 100vw'
 
+  capture initial_product_url
+    render 'n8f-default-product-url', product: product
+  endcapture
+  assign initial_product_url = initial_product_url | strip
+  assign initial_variant_id = initial_product_url | split: 'variant=' | last | split: '&' | first | plus: 0
+  assign initial_variant = product.selected_or_first_available_variant
+  assign initial_featured_media = product.featured_media
+  for product_variant in product.variants
+    if product_variant.id == initial_variant_id and product_variant.featured_media != blank
+      assign initial_variant = product_variant
+      assign initial_featured_media = product_variant.featured_media
+      break
+    endif
+  endfor
+  assign initial_color = ''
+  for product_option in product.options_with_values
+    assign normalized_option_name = product_option.name | downcase
+    if normalized_option_name == 'color' or normalized_option_name == 'colour'
+      assign color_option_index = product_option.position | minus: 1
+      assign initial_color = initial_variant.options[color_option_index]
+      break
+    endif
+  endfor
+
   # Check if product has badges and determine position
   assign has_badges = false
   assign badge_position = null
@@ -52,7 +76,7 @@
     when 'square'
       assign ratio = '1'
     when 'adapt'
-      assign ratio = product.featured_media.preview_image.aspect_ratio | default: '1'
+      assign ratio = initial_featured_media.preview_image.aspect_ratio | default: '1'
   endcase
 
   if block_settings.image_ratio == 'adapt' and block_settings.constrain_to_viewport
@@ -84,17 +108,146 @@
 >
   {%- if product.media.size > 0 -%}
     {% liquid
-      # Check if there are generic media that are not variant images
       assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src'
-      assign generic_media_size = product.media.size | minus: variant_images.size
+      assign additional_image_count = product.images.size | minus: variant_images.size
+      assign generic_media_size = additional_image_count
+      assign selected_mockup_group_index = nil
+      for variant_image in variant_images
+        if variant_image == initial_featured_media.src
+          assign selected_mockup_group_index = forloop.index0
+          break
+        endif
+      endfor
 
-      # Sort media so product.featured_media.preview_image comes first as that is the most relevant image to display
-      # product.featured_media updates based on search context and filters applied
+      assign mockups_per_color = 0
+      if variant_images.size > 0 and additional_image_count > 0
+        assign ungrouped_mockup_count = additional_image_count | modulo: variant_images.size
+        if ungrouped_mockup_count == 0
+          assign mockups_per_color = additional_image_count | divided_by: variant_images.size
+        endif
+      endif
 
-      assign other_media = product.media | reject: 'src', product.featured_media
-      assign media_list_to_show = product.featured_media | concat: other_media
+      assign verified_media_positions = ''
+      assign verified_media_order = ''
+      assign use_synchronized_media_map = false
+      assign synchronized_media_positions = ''
+      assign synchronized_media_map = product.metafields.n8f.media_color_map.value
+      if synchronized_media_map != blank and synchronized_media_map.imageCount == product.images.size
+        assign use_synchronized_media_map = true
+        assign synchronized_media_positions = synchronized_media_map.colors[initial_color]
+      endif
 
-      if product.media.size > 2 and generic_media_size > 0
+      if use_synchronized_media_map
+        # The synchronized Printify map is authoritative; product-specific rules below are legacy fallbacks.
+      elsif synchronized_media_map != blank
+        # The image list changed after the last sync. Show only the selected primary image until the map refreshes.
+      elsif product.handle == 'poor-reception-graphic-t-shirt'
+        case initial_color
+          when 'Athletic Heather'
+            assign verified_media_positions = ',1,9,10,11,12,'
+          when 'White'
+            assign verified_media_positions = ',2,13,14,15,16,'
+          when 'Ash'
+            assign verified_media_positions = ',3,18,19,20,21,'
+          when 'Natural'
+            assign verified_media_positions = ',4,22,23,24,25,'
+          when 'Heather Ice Blue'
+            assign verified_media_positions = ',5,26,27,28,29,'
+          when 'Heather True Royal'
+            assign verified_media_positions = ',6,30,31,32,33,'
+          when 'Dark Grey Heather'
+            assign verified_media_positions = ',7,34,35,36,37,'
+          when 'Navy'
+            assign verified_media_positions = ',8,38,39,40,41,'
+        endcase
+      elsif product.handle == 'poor-reception-premium'
+        case initial_color
+          when 'True Navy'
+            assign verified_media_positions = ',1,16,17,18,'
+          when 'White'
+            assign verified_media_positions = ',2,19,20,21,'
+          when 'Ivory'
+            assign verified_media_positions = ',3,23,24,25,'
+          when 'Pepper'
+            assign verified_media_positions = ',4,26,27,28,'
+          when 'Grey'
+            assign verified_media_positions = ',5,29,30,31,'
+          when 'Bay'
+            assign verified_media_positions = ',6,32,33,34,'
+          when 'Blue Spruce'
+            assign verified_media_positions = ',7,35,36,37,'
+          when 'Seafoam'
+            assign verified_media_positions = ',8,38,39,40,'
+          when 'Chambray'
+            assign verified_media_positions = ',9,41,42,43,'
+          when 'Blue Jean'
+            assign verified_media_positions = ',10,44,45,46,'
+          when 'Black'
+            assign verified_media_positions = ',11,47,48,49,'
+          when 'Violet'
+            assign verified_media_positions = ',12,50,51,52,'
+          when 'Orchid'
+            assign verified_media_positions = ',13,53,54,55,'
+          when 'Blossom'
+            assign verified_media_positions = ',14,56,57,58,'
+          when 'Berry'
+            assign verified_media_positions = ',15,59,60,61,'
+        endcase
+      endif
+
+      if use_synchronized_media_map
+        assign media_list_to_show = '' | split: ','
+        if synchronized_media_positions != blank
+          for ordered_position in synchronized_media_positions
+            assign media_index = ordered_position | minus: 1
+            assign found_media = product.media | slice: media_index, 1
+            assign media_list_to_show = media_list_to_show | concat: found_media
+          endfor
+        else
+          assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
+        endif
+      elsif synchronized_media_map != blank
+        assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
+      elsif verified_media_order != blank
+        assign media_list_to_show = '' | split: ','
+        assign ordered_media_positions = verified_media_order | split: ','
+        for ordered_position in ordered_media_positions
+          assign media_index = ordered_position | minus: 1
+          assign found_media = product.media | slice: media_index, 1
+          assign media_list_to_show = media_list_to_show | concat: found_media
+        endfor
+      else
+        assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
+        assign additional_image_index = 0
+        for media in product.media
+          if media.id == initial_featured_media.id
+            continue
+          endif
+
+          assign include_media = false
+          assign media_position_key = media.position | append: ',' | prepend: ','
+          if verified_media_positions contains media_position_key
+            assign include_media = true
+          elsif media.media_type == 'image' and variant_images contains media.src
+            assign include_media = false
+          elsif media.media_type == 'image'
+            if mockups_per_color > 0 and selected_mockup_group_index != nil
+              assign mockup_color_index = additional_image_index | divided_by: mockups_per_color
+              if mockup_color_index == selected_mockup_group_index
+                assign include_media = true
+              endif
+            endif
+            assign additional_image_index = additional_image_index | plus: 1
+          endif
+
+          if include_media
+            assign found_media = product.media | where: 'id', media.id
+            assign media_list_to_show = media_list_to_show | concat: found_media
+          endif
+        endfor
+      endif
+
+      if media_list_to_show.size > 1
         assign show_arrows = true
       endif
 
@@ -160,7 +313,7 @@
     <a
       class="contents"
       ref="cardGalleryLink"
-      href="{{ product.selected_or_first_available_variant.url }}"
+      href="{{ initial_product_url }}"
       aria-label="{{- product.title -}}"
     >
       {% render 'slideshow',
@@ -177,7 +330,7 @@
       <a
         class="contents"
         ref="cardGalleryLink"
-        href="{{ product.selected_or_first_available_variant.url }}"
+        href="{{ initial_product_url }}"
       >
         <span class="title-text">{{- product.title -}}</span>
       </a>
