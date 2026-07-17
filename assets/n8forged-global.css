@@ -173,6 +173,53 @@ footer::before {
   }
 }
 
+/* Keep the navigation drawer consistent wherever the responsive header uses it. */
+header-drawer .menu-drawer,
+header-drawer .menu-drawer__submenu {
+  --color-background: var(--n8f-bg);
+  --color-foreground: var(--n8f-text);
+  --color-foreground-rgb: 244 247 255;
+  --color-border: var(--n8f-border);
+  background: var(--n8f-bg);
+  color: var(--n8f-text);
+  border-color: var(--n8f-border);
+}
+
+header-drawer .menu-drawer {
+  width: max-content;
+  min-width: 13rem;
+  max-width: calc(100vw - 3rem);
+}
+
+header-drawer :is(
+  .menu-drawer__menu-item--mainlist,
+  .menu-drawer__menu-item--parent,
+  .menu-drawer__menu-item--child,
+  .menu-drawer__back-button,
+  .menu-drawer__close-button,
+  .drawer-localization__button
+) {
+  color: var(--n8f-text);
+}
+
+header-drawer :is(
+  .menu-drawer__menu-item--mainlist,
+  .menu-drawer__menu-item--parent,
+  .menu-drawer__menu-item--child
+):is(:hover, :focus-visible, [aria-current='page']) {
+  color: var(--n8f-cyan);
+}
+
+header-drawer .menu-drawer__list-item--divider,
+header-drawer .menu-drawer__menu-container--divider,
+header-drawer .menu-drawer__utility-links {
+  border-color: var(--n8f-border);
+}
+
+header-drawer .menu-drawer__featured-content {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .content-for-layout:not([data-template='index']) *,
   .header-logo,
