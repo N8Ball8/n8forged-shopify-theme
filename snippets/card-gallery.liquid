@@ -126,7 +126,19 @@
 
       assign verified_media_positions = ''
       assign verified_media_order = ''
-      if product.handle == 'poor-reception-graphic-t-shirt'
+      assign use_synchronized_media_map = false
+      assign synchronized_media_positions = ''
+      assign synchronized_media_map = product.metafields.n8f.media_color_map.value
+      if synchronized_media_map != blank and synchronized_media_map.imageCount == product.images.size
+        assign use_synchronized_media_map = true
+        assign synchronized_media_positions = synchronized_media_map.colors[initial_color]
+      endif
+
+      if use_synchronized_media_map
+        # The synchronized Printify map is authoritative; product-specific rules below are legacy fallbacks.
+      elsif synchronized_media_map != blank
+        # The image list changed after the last sync. Show only the selected primary image until the map refreshes.
+      elsif product.handle == 'poor-reception-graphic-t-shirt'
         case initial_color
           when 'Athletic Heather'
             assign verified_media_positions = ',1,9,10,11,12,'
@@ -208,7 +220,20 @@
         assign verified_media_positions = verified_media_order | prepend: ',' | append: ','
       endif
 
-      if verified_media_order != blank
+      if use_synchronized_media_map
+        assign media_list_to_show = '' | split: ','
+        if synchronized_media_positions != blank
+          for ordered_position in synchronized_media_positions
+            assign media_index = ordered_position | minus: 1
+            assign found_media = product.media | slice: media_index, 1
+            assign media_list_to_show = media_list_to_show | concat: found_media
+          endfor
+        else
+          assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
+        endif
+      elsif synchronized_media_map != blank
+        assign media_list_to_show = product.media | where: 'id', initial_featured_media.id
+      elsif verified_media_order != blank
         assign media_list_to_show = '' | split: ','
         assign ordered_media_positions = verified_media_order | split: ','
         for ordered_position in ordered_media_positions

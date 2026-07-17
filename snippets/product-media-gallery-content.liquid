@@ -141,7 +141,19 @@
   elsif filter_selected_color_media and selected_color != blank
     assign verified_media_positions = ''
     assign verified_media_order = ''
-    if selected_product.handle == 'every-name-classic-bella-canvas'
+    assign use_synchronized_media_map = false
+    assign synchronized_media_positions = ''
+    assign synchronized_media_map = selected_product.metafields.n8f.media_color_map.value
+    if synchronized_media_map != blank and synchronized_media_map.imageCount == selected_product.images.size
+      assign use_synchronized_media_map = true
+      assign synchronized_media_positions = synchronized_media_map.colors[selected_color]
+    endif
+
+    if use_synchronized_media_map
+      # The synchronized Printify map is authoritative; product-specific rules below are legacy fallbacks.
+    elsif synchronized_media_map != blank
+      # The image list changed after the last sync. Show only the selected primary image until the map refreshes.
+    elsif selected_product.handle == 'every-name-classic-bella-canvas'
       case selected_color
         when 'Athletic Heather'
           assign verified_media_positions = ',1,9,10,11,12,13,'
@@ -242,7 +254,21 @@
 
     assign selected_color_key = selected_color | downcase | prepend: 'color:'
     assign additional_image_index = 0
-    if verified_media_order != blank
+    if use_synchronized_media_map
+      if synchronized_media_positions != blank
+        for ordered_position in synchronized_media_positions
+          assign media_index = ordered_position | minus: 1
+          assign found_media = selected_product.media | slice: media_index, 1
+          assign sorted_media = sorted_media | concat: found_media
+        endfor
+      elsif selected_variant_media
+        assign sorted_media = sorted_media | concat: selected_product.media | where: 'id', selected_variant_media.id
+      endif
+    elsif synchronized_media_map != blank
+      if selected_variant_media
+        assign sorted_media = sorted_media | concat: selected_product.media | where: 'id', selected_variant_media.id
+      endif
+    elsif verified_media_order != blank
       assign ordered_media_positions = verified_media_order | split: ','
       for ordered_position in ordered_media_positions
         assign media_index = ordered_position | minus: 1
