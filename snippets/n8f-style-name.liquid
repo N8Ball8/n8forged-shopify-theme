@@ -1,0 +1,42 @@
+{% liquid
+  assign normalized_style_tag = style_tag | downcase | strip
+  assign style_handle = normalized_style_tag | remove_first: 'n8f-style-'
+  assign style_words = style_handle | split: '-'
+  assign skip_next_style_word = false
+
+  for style_word in style_words
+    if skip_next_style_word
+      assign skip_next_style_word = false
+      continue
+    endif
+
+    if style_word == blank
+      continue
+    endif
+
+    case style_word
+      when 'women', 'womens'
+        echo "Women's"
+      when 'men', 'mens'
+        echo "Men's"
+      when 'tshirt'
+        echo 'T-shirt'
+      when 'tshirts'
+        echo 'T-shirts'
+      when 'v'
+        assign next_style_word = style_words[forloop.index]
+        if next_style_word == 'neck'
+          echo 'V-Neck'
+          assign skip_next_style_word = true
+        else
+          echo 'V'
+        endif
+      else
+        echo style_word | capitalize
+    endcase
+
+    unless forloop.last
+      echo ' '
+    endunless
+  endfor
+%}
