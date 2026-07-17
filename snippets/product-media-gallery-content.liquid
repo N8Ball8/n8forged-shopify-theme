@@ -26,12 +26,46 @@
 {%- endif -%}
 {%- liquid
   assign selected_product = closest.product
-  assign selected_variant_media = selected_product.selected_or_first_available_variant.featured_media
+  assign selected_variant = selected_product.selected_variant
+  assign has_option_selection_request = false
+  if request.query_string contains 'option_values='
+    assign has_option_selection_request = true
+  endif
+  assign unavailable_selection = false
+
+  if selected_variant == blank and has_option_selection_request
+    assign unavailable_selection = true
+  else
+    assign selected_variant = selected_product.selected_or_first_available_variant
+  endif
+
+  assign selected_variant_media = selected_variant.featured_media
   assign first_3d_model = selected_product.media | where: 'media_type', 'model' | first
 
-  if block_settings.hide_variants
-    assign variant_images = selected_product.images | where: 'attached_to_variant?', true | map: 'src'
+  assign selected_color = ''
+  assign is_n8f_family_product = false
+  for product_tag in selected_product.tags
+    assign normalized_product_tag = product_tag | downcase
+    if normalized_product_tag contains 'n8f-family-'
+      assign is_n8f_family_product = true
+      break
+    endif
+  endfor
+
+  assign filter_selected_color_media = block_settings.show_selected_variant_media_only
+  if is_n8f_family_product
+    assign filter_selected_color_media = true
   endif
+
+  for product_option in selected_product.options_with_values
+    assign option_name = product_option.name | downcase
+    if option_name == 'color' or option_name == 'colour'
+      assign selected_color = product_option.selected_value
+      break
+    endif
+  endfor
+
+  assign variant_images = selected_product.images | where: 'attached_to_variant?', true | map: 'src'
 
   if block_settings.slideshow_controls_style == 'thumbnails'
     assign controls_on_media = false
@@ -102,7 +136,112 @@
   endif
 
   assign sorted_media = '' | split: ','
-  if selected_variant_media
+  if filter_selected_color_media and unavailable_selection
+    assign sorted_media = '' | split: ','
+  elsif filter_selected_color_media and selected_color != blank
+    assign verified_media_positions = ''
+    if selected_product.handle == 'every-name-classic-bella-canvas'
+      case selected_color
+        when 'Athletic Heather'
+          assign verified_media_positions = ',1,9,10,11,12,13,'
+        when 'White'
+          assign verified_media_positions = ',2,14,15,16,17,18,'
+        when 'Ash'
+          assign verified_media_positions = ',3,19,20,21,22,23,'
+        when 'Natural'
+          assign verified_media_positions = ',4,24,25,26,27,28,'
+        when 'Heather Ice Blue'
+          assign verified_media_positions = ',5,29,30,31,32,33,'
+        when 'Heather True Royal'
+          assign verified_media_positions = ',6,34,35,36,37,38,'
+        when 'Dark Grey Heather'
+          assign verified_media_positions = ',7,39,40,41,42,43,'
+        when 'Navy'
+          assign verified_media_positions = ',8,44,45,46,47,48,'
+      endcase
+    elsif selected_product.handle == 'poor-reception-premium'
+      case selected_color
+        when 'True Navy'
+          assign verified_media_positions = ',1,16,17,18,'
+        when 'White'
+          assign verified_media_positions = ',2,19,20,21,'
+        when 'Ivory'
+          assign verified_media_positions = ',3,23,24,25,'
+        when 'Pepper'
+          assign verified_media_positions = ',4,26,27,28,'
+        when 'Grey'
+          assign verified_media_positions = ',5,29,30,31,'
+        when 'Bay'
+          assign verified_media_positions = ',6,32,33,34,'
+        when 'Blue Spruce'
+          assign verified_media_positions = ',7,35,36,37,'
+        when 'Seafoam'
+          assign verified_media_positions = ',8,38,39,40,'
+        when 'Chambray'
+          assign verified_media_positions = ',9,41,42,43,'
+        when 'Blue Jean'
+          assign verified_media_positions = ',10,44,45,46,'
+        when 'Black'
+          assign verified_media_positions = ',11,47,48,49,'
+        when 'Violet'
+          assign verified_media_positions = ',12,50,51,52,'
+        when 'Orchid'
+          assign verified_media_positions = ',13,53,54,55,'
+        when 'Blossom'
+          assign verified_media_positions = ',14,56,57,58,'
+        when 'Berry'
+          assign verified_media_positions = ',15,59,60,61,'
+      endcase
+    endif
+
+    assign selected_mockup_group_index = nil
+    if selected_variant_media
+      for variant_image in variant_images
+        if variant_image == selected_variant_media.src
+          assign selected_mockup_group_index = forloop.index0
+          break
+        endif
+      endfor
+    endif
+
+    assign color_count = variant_images.size
+    assign additional_image_count = selected_product.images.size | minus: variant_images.size
+    assign mockups_per_color = 0
+    if color_count > 0 and additional_image_count > 0
+      assign mockups_per_color = additional_image_count | divided_by: color_count
+    endif
+
+    assign selected_color_key = selected_color | downcase | prepend: 'color:'
+    assign additional_image_index = 0
+    for media in selected_product.media
+      assign media_position_key = media.position | append: ',' | prepend: ','
+      assign media_alt_key = media.alt | downcase | strip
+      assign include_media = false
+
+      if verified_media_positions contains media_position_key
+        assign include_media = true
+      elsif media_alt_key == selected_color_key
+        assign include_media = true
+      elsif verified_media_positions == blank and selected_variant_media and media.id == selected_variant_media.id
+        assign include_media = true
+      elsif media.media_type == 'image' and variant_images contains media.src
+        assign include_media = false
+      elsif media.media_type == 'image'
+        if mockups_per_color > 0 and selected_mockup_group_index != nil
+          assign mockup_color_index = additional_image_index | divided_by: mockups_per_color
+          if mockup_color_index == selected_mockup_group_index
+            assign include_media = true
+          endif
+        endif
+        assign additional_image_index = additional_image_index | plus: 1
+      endif
+
+      if include_media
+        assign found_media = selected_product.media | where: 'id', media.id
+        assign sorted_media = sorted_media | concat: found_media
+      endif
+    endfor
+  elsif selected_variant_media
     assign sorted_media = sorted_media | concat: selected_product.media | where: 'id', selected_variant_media.id
 
     for media in selected_product.media
@@ -352,6 +491,7 @@
     "
     style="{% render 'spacing-style', settings: block_settings %} --thumbnail-width: {{ block_settings.thumbnail_width }}px; --media-radius: {{ block_settings.media_radius }}px;{% if block_settings.icons_style contains 'large' %} --slideshow-icon-padding: 0px;{% endif %}--image-gap: {{ block_settings.image_gap }}px;{% unless block_settings.aspect_ratio == 'adapt' %} --gallery-aspect-ratio: {{ block_settings.aspect_ratio }};{% endunless %}"
     data-presentation="{{ media_presentation }}"
+    data-unavailable-message="Unavailable for now. Luckily, you look great in other colors too."
     {{ block_shopify_attributes }}
   >
     {% capture slides %}
@@ -1026,6 +1166,18 @@
   .media-gallery--carousel slideshow-arrows .slideshow-control {
     padding-inline: 0 var(--padding-md);
     opacity: 1;
+  }
+
+  .media-gallery__unavailable-message {
+    display: grid;
+    min-height: min(70vh, 680px);
+    margin: 0;
+    padding: var(--padding-xl);
+    place-items: center;
+    color: rgb(var(--color-foreground-rgb) / 0.72);
+    font-size: var(--font-size--lg);
+    line-height: 1.5;
+    text-align: center;
   }
 
   @media screen and (max-width: 749px) {
