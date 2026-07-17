@@ -160,7 +160,9 @@ async function getShopifyProduct(handle, shopifyToken) {
 
   return {
     id: data.product.id.split('/').pop(),
-    images: data.product.media.nodes.filter((media) => media.image?.url),
+    images: data.product.media.nodes
+      .filter((media) => media.image?.url)
+      .map((media) => ({ id: media.id, url: media.image.url })),
   };
 }
 
