@@ -57,7 +57,11 @@ class N8ForgedAuction extends HTMLElement {
         query.delete('auction_login');
         const cleanQuery = query.toString();
         window.history.replaceState({}, document.title, `${window.location.pathname}${cleanQuery ? `?${cleanQuery}` : ''}`);
-        this.setFeedback(error.message, true);
+        if (this.accessToken) {
+          this.setFeedback('You’re already signed in and ready to bid.');
+        } else {
+          this.setFeedback(error.message, true);
+        }
       }
       return;
     }
@@ -84,7 +88,11 @@ class N8ForgedAuction extends HTMLElement {
         query.delete('type');
         const cleanQuery = query.toString();
         window.history.replaceState({}, document.title, `${window.location.pathname}${cleanQuery ? `?${cleanQuery}` : ''}`);
-        this.setFeedback(error.message, true);
+        if (this.accessToken) {
+          this.setFeedback('You’re already signed in and ready to bid.');
+        } else {
+          this.setFeedback(error.message, true);
+        }
       }
       return;
     }
