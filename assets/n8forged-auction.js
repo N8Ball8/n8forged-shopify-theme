@@ -513,10 +513,14 @@ class N8ForgedAuction extends HTMLElement {
   askBidConfirmation(amount, kind) {
     const dialog = this.querySelector('[data-bid-confirm]');
     const copy = this.querySelector('[data-bid-confirm-copy]');
+    const quickNote = this.querySelector('[data-bid-confirm-quick]');
+    const maximumNote = this.querySelector('[data-bid-confirm-maximum]');
     if (!dialog || !copy) return Promise.resolve(false);
     copy.textContent = kind === 'maximum'
       ? `Set your private Maximum Bid to ${this.money(amount)}?`
       : `Place the next bid of ${this.money(amount)}?`;
+    if (quickNote) quickNote.hidden = kind === 'maximum';
+    if (maximumNote) maximumNote.hidden = kind !== 'maximum';
     if (!dialog.open) dialog.showModal();
     return new Promise((resolve) => { this.bidConfirmationResolver = resolve; });
   }
