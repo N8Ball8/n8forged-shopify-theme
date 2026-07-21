@@ -206,6 +206,13 @@ class N8ForgedAuction extends HTMLElement {
       }
       this.confirmBid(value, 'maximum');
     });
+    this.querySelector('#AuctionMaximumBid')?.addEventListener('keydown', (event) => {
+      if (event.key !== 'Tab' || event.shiftKey) return;
+      const submitButton = this.querySelector('[data-max-bid-submit]');
+      if (!submitButton || submitButton.disabled) return;
+      event.preventDefault();
+      submitButton.focus({ preventScroll: true });
+    });
 
     this.querySelector('[data-view-all-bids]')?.addEventListener('click', () => {
       this.renderBids(true);
