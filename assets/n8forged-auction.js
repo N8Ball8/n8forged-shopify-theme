@@ -516,10 +516,27 @@ class N8ForgedAuction extends HTMLElement {
       const hasBid = viewer?.maximumBid != null;
       const status = !viewer ? 'signed-out' : viewer.isLeading ? 'winning' : hasBid ? 'outbid' : 'ready';
       identity.dataset.status = status;
-      if (!viewer) identity.innerHTML = '<strong>Sign in to bid.</strong><br>Your Auction Nickname is the only identity shown publicly.';
-      else if (status === 'winning') identity.innerHTML = `<strong>✓ You’re winning!</strong><br>Signed in as ${this.escape(viewer.nickname)}`;
-      else if (status === 'outbid') identity.innerHTML = `<strong>! You’ve been outbid.</strong><br>Bid again to take the lead · Signed in as ${this.escape(viewer.nickname)}`;
-      else identity.innerHTML = `<strong>Ready to bid</strong><br>Signed in as ${this.escape(viewer.nickname)}`;
+      if (!viewer) {
+        identity.innerHTML = `
+          <div class="n8f-auction__login-state"><strong>Not signed in</strong></div>
+          <div class="n8f-auction__bidder-status">Sign in to bid. Your Auction Nickname is the only identity shown publicly.</div>
+        `;
+      } else if (status === 'winning') {
+        identity.innerHTML = `
+          <div class="n8f-auction__login-state">Signed in as <strong>${this.escape(viewer.nickname)}</strong></div>
+          <div class="n8f-auction__bidder-status"><strong>✓ You’re winning!</strong></div>
+        `;
+      } else if (status === 'outbid') {
+        identity.innerHTML = `
+          <div class="n8f-auction__login-state">Signed in as <strong>${this.escape(viewer.nickname)}</strong></div>
+          <div class="n8f-auction__bidder-status"><strong>! You’ve been outbid.</strong><span>Bid again to take the lead.</span></div>
+        `;
+      } else {
+        identity.innerHTML = `
+          <div class="n8f-auction__login-state">Signed in as <strong>${this.escape(viewer.nickname)}</strong></div>
+          <div class="n8f-auction__bidder-status"><strong>Ready to bid</strong></div>
+        `;
+      }
     }
 
     const signedIn = Boolean(this.state.viewer);
