@@ -219,6 +219,12 @@ class N8ForgedAuction extends HTMLElement {
     this.querySelector('[data-registration-form]')?.addEventListener('submit', (event) => this.requestCode(event));
     this.querySelector('[data-returning-form]')?.addEventListener('submit', (event) => this.requestReturningLink(event));
     this.querySelector('[data-auction-logout]')?.addEventListener('click', () => this.logout());
+    this.querySelector('[data-nickname-form]')?.addEventListener('submit', (event) => this.updateNickname(event));
+    this.querySelector('[data-nickname-close]')?.addEventListener('click', () => this.querySelector('[data-nickname-dialog]')?.close());
+    this.querySelector('[data-nickname-dialog]')?.addEventListener('close', () => this.unlockPageScroll());
+    this.addEventListener('click', (event) => {
+      if (event.target.closest('[data-change-nickname]')) this.openNicknameDialog();
+    });
     this.querySelectorAll('[data-auth-tab]').forEach((tab) => tab.addEventListener('click', () => this.selectAuthTab(tab.dataset.authTab)));
 
     this.querySelectorAll('[data-bid-confirm-cancel]').forEach((button) => button.addEventListener('click', () => this.resolveBidConfirmation(false)));
@@ -434,6 +440,54 @@ class N8ForgedAuction extends HTMLElement {
     this.loadState();
   }
 
+  openNicknameDialog() {
+    if (!this.state.viewer) return;
+    const dialog = this.querySelector('[data-nickname-dialog]');
+    const current = this.querySelector('[data-current-nickname]');
+    const input = this.querySelector('[data-nickname-form] [name="nickname"]');
+    if (current) current.value = this.state.viewer.nickname || '';
+    if (input) input.value = this.state.viewer.nickname || '';
+    this.setNicknameFeedback('');
+    if (dialog && !dialog.open) {
+      this.lockPageScroll();
+      dialog.showModal();
+    }
+    window.setTimeout(() => input?.focus(), 50);
+  }
+
+  async updateNickname(event) {
+    event.preventDefault();
+    const input = event.currentTarget.querySelector('[name="nickname"]');
+    const nickname = String(input?.value || '').trim();
+    if (!nickname) {
+      this.setNicknameFeedback('Enter a new Auction Nickname.', true);
+      return;
+    }
+    if (!this.apiUrl || !this.accessToken) {
+      this.setNicknameFeedback('Sign in before changing your nickname.', true);
+      return;
+    }
+
+    this.setNicknameFeedback('Saving nickname...');
+    try {
+      await this.ensureFreshSession();
+      const response = await fetch(`${this.apiUrl}/auth/update-nickname`, {
+        method: 'POST',
+        headers: this.headers(true),
+        body: JSON.stringify({ auction_id: this.auctionId, nickname }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'The nickname could not be updated.');
+      this.state.viewer = { ...this.state.viewer, nickname: result.profile.nickname };
+      this.setNicknameFeedback('Nickname updated.');
+      this.setFeedback(`Signed in as ${result.profile.nickname}.`);
+      await this.loadState();
+      window.setTimeout(() => this.querySelector('[data-nickname-dialog]')?.close(), 400);
+    } catch (error) {
+      this.setNicknameFeedback(error.message, true);
+    }
+  }
+
   async heartbeat() {
     if (!this.accessToken || !this.state.viewer || !this.apiUrl || document.hidden) return;
     try {
@@ -523,17 +577,17 @@ class N8ForgedAuction extends HTMLElement {
         `;
       } else if (status === 'winning') {
         identity.innerHTML = `
-          <div class="n8f-auction__login-state">Signed in as <strong>${this.escape(viewer.nickname)}</strong></div>
+          <div class="n8f-auction__login-state">Signed in as <button type="button" class="n8f-auction__nickname-button" data-change-nickname>${this.escape(viewer.nickname)}</button></div>
           <div class="n8f-auction__bidder-status"><strong>✓ You’re winning!</strong></div>
         `;
       } else if (status === 'outbid') {
         identity.innerHTML = `
-          <div class="n8f-auction__login-state">Signed in as <strong>${this.escape(viewer.nickname)}</strong></div>
+          <div class="n8f-auction__login-state">Signed in as <button type="button" class="n8f-auction__nickname-button" data-change-nickname>${this.escape(viewer.nickname)}</button></div>
           <div class="n8f-auction__bidder-status"><strong>! You’ve been outbid.</strong><span>Bid again to take the lead.</span></div>
         `;
       } else {
         identity.innerHTML = `
-          <div class="n8f-auction__login-state">Signed in as <strong>${this.escape(viewer.nickname)}</strong></div>
+          <div class="n8f-auction__login-state">Signed in as <button type="button" class="n8f-auction__nickname-button" data-change-nickname>${this.escape(viewer.nickname)}</button></div>
           <div class="n8f-auction__bidder-status"><strong>Ready to bid</strong></div>
         `;
       }
@@ -742,6 +796,13 @@ class N8ForgedAuction extends HTMLElement {
 
   setAuthFeedback(message, error = false) {
     const target = this.querySelector('[data-auth-feedback]');
+    if (!target) return;
+    target.textContent = message;
+    target.classList.toggle('is-error', error);
+  }
+
+  setNicknameFeedback(message, error = false) {
+    const target = this.querySelector('[data-nickname-feedback]');
     if (!target) return;
     target.textContent = message;
     target.classList.toggle('is-error', error);

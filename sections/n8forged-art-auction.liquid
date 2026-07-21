@@ -270,7 +270,7 @@
         <div class="n8f-auction__field">
           <label for="AuctionNickname">Auction Nickname</label>
           <input id="AuctionNickname" name="nickname" maxlength="32" autocomplete="nickname" required>
-          <small>This is the only name other visitors will see. It cannot be changed after registration; the auction administrator can change it upon request.</small>
+          <small>This is the only name other visitors will see. You can change it later from the auction page while signed in.</small>
         </div>
         <div class="n8f-auction__field">
           <label for="AuctionEmail">Email</label>
@@ -300,6 +300,26 @@
       <button class="n8f-auction__button" type="button" data-auth-done>Close and check my email</button>
     </div>
     <p class="n8f-auction__feedback" data-auth-feedback aria-live="polite"></p>
+  </dialog>
+
+  <dialog class="n8f-auction__auth" data-nickname-dialog>
+    <button class="n8f-auction__auth-close" type="button" aria-label="Close nickname editor" data-nickname-close>×</button>
+    <p class="n8f-auction__kicker">Auction Nickname</p>
+    <h2>Change your public name</h2>
+    <p class="n8f-auction__helper">Only your Auction Nickname appears in public bid history. Your full name stays private.</p>
+    <form data-nickname-form novalidate>
+      <div class="n8f-auction__field">
+        <label for="AuctionNicknameChangeCurrent">Current nickname</label>
+        <input id="AuctionNicknameChangeCurrent" data-current-nickname readonly>
+      </div>
+      <div class="n8f-auction__field">
+        <label for="AuctionNicknameChange">New nickname</label>
+        <input id="AuctionNicknameChange" name="nickname" maxlength="32" autocomplete="nickname" required>
+        <small>Keep it clean. This name is visible to other bidders.</small>
+      </div>
+      <button class="n8f-auction__button" type="submit">Save nickname</button>
+    </form>
+    <p class="n8f-auction__feedback" data-nickname-feedback aria-live="polite"></p>
   </dialog>
 
   <dialog class="n8f-auction__confirm" data-bid-confirm>

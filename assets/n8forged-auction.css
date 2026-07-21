@@ -273,6 +273,24 @@
   color: var(--auction-muted);
 }
 
+.n8f-auction__nickname-button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--auction-ink);
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.n8f-auction__nickname-button:hover,
+.n8f-auction__nickname-button:focus-visible {
+  color: #82a4ff;
+}
+
 .n8f-auction__bidder-status {
   display: grid;
   gap: 4px;

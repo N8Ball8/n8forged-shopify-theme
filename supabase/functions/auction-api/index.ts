@@ -565,6 +565,45 @@ export default {
           }
         }
 
+        if (route === 'auth/update-nickname' && req.method === 'POST') {
+          const user = await authenticatedUser(req)
+          if (!user) return json(req, { error: 'Sign in before changing your nickname.' }, 401)
+
+          const input = await req.json()
+          const nickname = cleanText(input.nickname, 32)
+          if (nickname.length < 2 || !nicknameIsSafe(nickname)) {
+            return json(req, { error: 'Choose a different Auction Nickname.' }, 400)
+          }
+
+          const { data: profile, error: profileError } = await admin
+            .from('bidder_profiles')
+            .select('id, blocked_at')
+            .eq('id', user.id)
+            .single()
+          if (profileError) throw profileError
+          if (profile.blocked_at) return json(req, { error: 'This bidder is not eligible to change their nickname.' }, 403)
+
+          const { data: nicknameOwner, error: nicknameOwnerError } = await admin
+            .from('bidder_profiles')
+            .select('id')
+            .ilike('nickname', nickname)
+            .maybeSingle()
+          if (nicknameOwnerError) throw nicknameOwnerError
+          if (nicknameOwner && nicknameOwner.id !== user.id) {
+            return json(req, { error: 'That Auction Nickname is already taken.' }, 409)
+          }
+
+          const { data: updatedProfile, error: updateError } = await admin
+            .from('bidder_profiles')
+            .update({ nickname })
+            .eq('id', user.id)
+            .select('nickname')
+            .single()
+          if (updateError) throw updateError
+
+          return json(req, { profile: updatedProfile })
+        }
+
         if (route === 'auction-state' && req.method === 'GET') {
           const slug = cleanText(new URL(req.url).searchParams.get('auction_id'), 80)
           const { data: auction, error } = await admin
