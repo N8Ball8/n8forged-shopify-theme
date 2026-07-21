@@ -46,6 +46,51 @@
     </div>
   </section>
 
+  {% if section.settings.show_auction_promo %}
+    <section
+      class="n8f-auction-promo"
+      aria-labelledby="n8f-auction-promo-title"
+      data-auction-promo
+      data-ends-at="2026-08-16T01:00:00Z"
+    >
+      <div class="n8f-shell n8f-auction-promo__inner">
+        <div>
+          <p class="n8f-kicker">Live mission art auction</p>
+          <h2 id="n8f-auction-promo-title">{{ section.settings.auction_heading }}</h2>
+          <p>Bid on Andrea’s donated original painting. 100% of the winning bid supports our family’s Costa Rica mission trip.</p>
+        </div>
+        <div class="n8f-auction-promo__action">
+          <p data-auction-promo-countdown>Ends August 15 at 8 PM Central</p>
+          <a class="n8f-button n8f-button--primary" href="{{ section.settings.auction_link }}">
+            View the art auction
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    <script>
+      (() => {
+        const promo = document.querySelector('[data-auction-promo]');
+        const output = promo?.querySelector('[data-auction-promo-countdown]');
+        if (!promo || !output) return;
+        const end = new Date(promo.dataset.endsAt).getTime();
+        const update = () => {
+          const remaining = Math.max(0, end - Date.now());
+          if (remaining === 0) {
+            output.textContent = 'Auction scheduled to close';
+            return;
+          }
+          const days = Math.floor(remaining / 86400000);
+          const hours = Math.floor((remaining / 3600000) % 24);
+          const minutes = Math.floor((remaining / 60000) % 60);
+          output.textContent = `${days}d ${hours}h ${minutes}m remaining`;
+        };
+        update();
+        window.setInterval(update, 60000);
+      })();
+    </script>
+  {% endif %}
+
   <section id="mission" class="n8f-mission" aria-labelledby="n8f-mission-title">
     <div class="n8f-shell n8f-mission__grid">
       <div>
@@ -184,6 +229,24 @@
       "id": "secondary_label",
       "label": "Secondary button label",
       "default": "Why Costa Rica"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_auction_promo",
+      "label": "Show art auction promotion",
+      "default": false,
+      "info": "Keep disabled until the auction page is approved and ready."
+    },
+    {
+      "type": "text",
+      "id": "auction_heading",
+      "label": "Auction promotion heading",
+      "default": "One original painting. One meaningful journey."
+    },
+    {
+      "type": "url",
+      "id": "auction_link",
+      "label": "Auction page link"
     },
     {
       "type": "text",

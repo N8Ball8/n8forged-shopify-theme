@@ -6,6 +6,9 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    {% if template.suffix == 'art-auction' %}
+      <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    {% endif %}
     {%- if settings.favicon != blank -%}
       <link
         rel="icon"
