@@ -303,10 +303,6 @@ class N8ForgedAuction extends HTMLElement {
       if (!response.ok) throw new Error(result.error || 'The bid could not be placed.');
       this.state = { ...this.state, ...result.auction };
       await this.loadState();
-      if (kind === 'maximum') {
-        const maxInput = this.querySelector('[name="maximum_bid"]');
-        if (maxInput) maxInput.value = '';
-      }
       this.setFeedback(result.message || 'Your bid was placed successfully.');
       this.render();
     } catch (error) {
