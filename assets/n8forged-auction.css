@@ -85,7 +85,16 @@
 }
 
 .n8f-auction__impact span {
+  display: block;
   color: var(--auction-muted);
+}
+
+.n8f-auction__impact p {
+  max-width: 720px;
+  margin: 8px 0;
+  color: var(--auction-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
 }
 
 .n8f-auction__clock {
