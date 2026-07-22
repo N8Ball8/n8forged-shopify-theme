@@ -298,7 +298,7 @@ begin
   if v_previous.effective_ends_at - v_requested_at <= v_previous.extension_window
      and v_event_count > 0 then
     update public.auctions
-    set effective_ends_at = effective_ends_at + (extension_duration * v_event_count),
+    set effective_ends_at = greatest(effective_ends_at, v_requested_at + extension_duration),
         updated_at = now()
     where id = v_auction.id
     returning * into v_auction;
