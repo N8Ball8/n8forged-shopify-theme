@@ -375,6 +375,7 @@ begin
   delete from public.email_outbox where auction_id = v_auction.id;
   delete from public.auction_reminder_sends where auction_id = v_auction.id;
   delete from public.auction_outbid_email_sends where auction_id = v_auction.id;
+  delete from public.auction_finalization_sends where auction_id = v_auction.id;
   delete from public.auction_extensions where auction_id = v_auction.id;
   delete from public.bid_events where auction_id = v_auction.id;
   delete from public.maximum_bids where auction_id = v_auction.id;

@@ -245,6 +245,9 @@ async function processAuctionReminder(slug: string) {
     .eq('slug', slug)
     .single()
   if (auctionError) throw auctionError
+  if (new Date(auction.effective_ends_at).getTime() <= Date.now()) {
+    return await processAuctionFinalization(slug)
+  }
   if (auction.status !== 'open') return { message: 'The auction is not open.', sent: 0, skipped: true }
 
   const reminder = auctionReminderWindow(auction.effective_ends_at)
@@ -331,6 +334,88 @@ async function processAuctionReminder(slug: string) {
   if (recordError) throw recordError
 
   return { message: `Sent the ${reminder.label} reminder to ${sent} bidder${sent === 1 ? '' : 's'}.`, sent, reminder: reminder.key }
+}
+
+async function processAuctionFinalization(slug: string) {
+  const { data: auction, error: auctionError } = await admin
+    .from('auctions')
+    .select('id, slug, status, current_price, reserve_met, effective_ends_at, winning_bidder_id')
+    .eq('slug', slug)
+    .single()
+  if (auctionError) throw auctionError
+
+  if (new Date(auction.effective_ends_at).getTime() > Date.now()) {
+    return { message: 'The auction has not ended yet.', sent: 0, skipped: true }
+  }
+
+  if (auction.status === 'cancelled') {
+    return { message: 'The auction was cancelled.', sent: 0, skipped: true }
+  }
+
+  const { data: existingSend } = await admin
+    .from('auction_finalization_sends')
+    .select('auction_id')
+    .eq('auction_id', auction.id)
+    .maybeSingle()
+  if (existingSend) {
+    return { message: 'The auction was already finalized.', sent: 0, skipped: true }
+  }
+
+  const finalStatus = auction.status === 'closed' ? 'closed' : 'closed'
+  const { error: closeError } = await admin
+    .from('auctions')
+    .update({ status: finalStatus, updated_at: new Date().toISOString() })
+    .eq('id', auction.id)
+  if (closeError) throw closeError
+
+  if (!auction.reserve_met || !auction.winning_bidder_id) {
+    const { error: recordNoWinnerError } = await admin.from('auction_finalization_sends').insert({
+      auction_id: auction.id,
+      winner_bidder_id: auction.winning_bidder_id,
+      recipient: null,
+      final_price: Number(auction.current_price || 0),
+    })
+    if (recordNoWinnerError && recordNoWinnerError.code !== '23505') throw recordNoWinnerError
+    return { message: 'The auction closed without a winner email because reserve was not met or no winner exists.', sent: 0, skipped: true }
+  }
+
+  const { data: winner, error: winnerError } = await admin
+    .from('bidder_profiles')
+    .select('id, email, nickname, full_name')
+    .eq('id', auction.winning_bidder_id)
+    .single()
+  if (winnerError) throw winnerError
+
+  const { error: recordError } = await admin.from('auction_finalization_sends').insert({
+    auction_id: auction.id,
+    winner_bidder_id: winner.id,
+    recipient: winner.email,
+    final_price: Number(auction.current_price || 0),
+  })
+  if (recordError) {
+    if (recordError.code === '23505') return { message: 'The auction was already finalized.', sent: 0, skipped: true }
+    throw recordError
+  }
+
+  const finalPrice = Number(auction.current_price || 0)
+  const auctionUrl = await createAuctionLoginUrl(winner.id, new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString())
+  await sendAuctionEmail(
+    winner.email,
+    'You won Joy in Our Chains',
+    `<h2>Congratulations, you won Joy in Our Chains</h2>
+    <p>Hi ${cleanText(winner.nickname, 32)},</p>
+    <p>You are the winning bidder for <strong>Joy in Our Chains</strong>.</p>
+    <p>Your winning bid is <strong>$${finalPrice.toLocaleString('en-US')}</strong>.</p>
+    <div style="margin:18px 0;padding:16px;border-radius:12px;background:#eef4ff;border:1px solid #bfdbfe;">
+      <p style="margin:0;font-size:16px;line-height:1.5;"><strong>Next step:</strong> Please reply to this email within 48 hours and tell us whether you want local pickup in Little Rock, Arkansas or insured shipping.</p>
+    </div>
+    <p>If you choose shipping, include your full shipping address. Shipping, packing, insurance, taxes, duties, and customs charges are paid separately from the winning bid.</p>
+    <p>Nathan will follow up with the Shopify payment link and final pickup or shipping details.</p>
+    <p><a href="${auctionUrl}" style="display:inline-block;padding:14px 22px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;">View the final auction result</a></p>
+    <p>Thank you for supporting the Costa Rica mission trip. 100% of the auction funds go toward the trip, and you get one-of-a-kind original art as well. What a deal.</p>`
+  )
+
+  return { message: `Winner email sent to ${winner.email}.`, sent: 1, winner: winner.nickname }
 }
 
 function authenticatedClient(req: Request) {
@@ -715,6 +800,11 @@ export default {
           const input = await req.json()
           const slug = cleanText(input.auction_id, 80)
           const durationHours = Number(input.duration_hours || 24)
+          const { data: resetAuction } = await admin
+            .from('auctions')
+            .select('id')
+            .eq('slug', slug)
+            .maybeSingle()
 
           if (input.clear_registrations) {
             const { data: protectedAdmins } = await admin.from('auction_admins').select('user_id')
@@ -726,6 +816,9 @@ export default {
                 if (deleteError) throw deleteError
               }
             }
+          }
+          if (resetAuction?.id) {
+            await admin.from('auction_finalization_sends').delete().eq('auction_id', resetAuction.id)
           }
           const { data, error } = await authenticatedClient(req).rpc('reset_test_auction', {
             p_auction_slug: slug,
@@ -750,6 +843,12 @@ export default {
           const input = await req.json().catch(() => ({}))
           const slug = cleanText(input.auction_id || 'mission-art-2026', 80)
           return json(req, await processAuctionReminder(slug))
+        }
+
+        if (route === 'finalize-auction' && req.method === 'POST') {
+          const input = await req.json().catch(() => ({}))
+          const slug = cleanText(input.auction_id || 'mission-art-2026', 80)
+          return json(req, await processAuctionFinalization(slug))
         }
 
         if (route === 'place-bid' && req.method === 'POST') {

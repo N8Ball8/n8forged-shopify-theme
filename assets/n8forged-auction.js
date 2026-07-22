@@ -564,9 +564,28 @@ class N8ForgedAuction extends HTMLElement {
 
     if (remaining === 0 && !this.endRefreshRequested) {
       this.endRefreshRequested = true;
-      this.loadState();
+      this.finalizeAuction();
     }
     if (remaining === 0) this.render();
+  }
+
+  async finalizeAuction() {
+    if (!this.apiUrl) {
+      await this.loadState();
+      return;
+    }
+
+    try {
+      await fetch(`${this.apiUrl}/finalize-auction`, {
+        method: 'POST',
+        headers: this.headers(true),
+        body: JSON.stringify({ auction_id: this.auctionId }),
+      });
+    } catch (_) {
+      /* The visual ending should still happen even if the finalization call is delayed. */
+    } finally {
+      await this.loadState();
+    }
   }
 
   render() {
