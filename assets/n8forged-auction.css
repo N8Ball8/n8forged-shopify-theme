@@ -230,9 +230,12 @@
   text-transform: uppercase;
 }
 
-.n8f-auction__bid-history-row {
-  margin: -2px 0 12px;
-  text-align: right;
+.n8f-auction__reserve-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 18px;
 }
 
 .n8f-auction__bid-history-link {
