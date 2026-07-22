@@ -50,6 +50,40 @@
   align-items: end;
 }
 
+.n8f-auction__hero-side {
+  display: grid;
+  gap: 18px;
+}
+
+.n8f-auction__hero-art {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--auction-line);
+  border-radius: 22px;
+  background: var(--auction-panel);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.n8f-auction__hero-art img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+.n8f-auction__hero-art span {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(8, 11, 17, 0.72);
+  color: var(--auction-ink);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
 .n8f-auction h1,
 .n8f-auction h2,
 .n8f-auction h3,
