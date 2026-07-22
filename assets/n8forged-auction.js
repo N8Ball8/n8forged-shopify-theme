@@ -32,6 +32,8 @@ class N8ForgedAuction extends HTMLElement {
     window.addEventListener('hashchange', this.completeEmailLinkHandler);
     this.refreshTimer = window.setInterval(() => this.loadState(), 12000);
     this.presenceTimer = window.setInterval(() => this.heartbeat(), 30000);
+    this.celebratedAuctionEnd = false;
+    this.endRefreshRequested = false;
   }
 
   async completeEmailLink() {
@@ -560,12 +562,17 @@ class N8ForgedAuction extends HTMLElement {
       if (target) target.textContent = String(value).padStart(2, '0');
     });
 
-    if (remaining === 0 && this.state.status === 'open') {
+    if (remaining === 0 && !this.endRefreshRequested) {
+      this.endRefreshRequested = true;
       this.loadState();
     }
+    if (remaining === 0) this.render();
   }
 
   render() {
+    const ended = this.isAuctionEnded();
+    this.classList.toggle('is-ended', ended);
+
     const price = this.querySelector('[data-current-price]');
     if (price) price.textContent = this.money(this.state.currentPrice);
 
@@ -580,8 +587,19 @@ class N8ForgedAuction extends HTMLElement {
       const viewer = this.state.viewer;
       const hasBid = viewer?.maximumBid != null;
       const status = !viewer ? 'signed-out' : viewer.isLeading ? 'winning' : hasBid ? 'outbid' : 'ready';
-      identity.dataset.status = status;
-      if (!viewer) {
+      const winner = this.winningBid();
+      identity.dataset.status = ended ? 'ended' : status;
+      if (ended) {
+        const winnerName = winner?.nickname || 'the winning bidder';
+        identity.innerHTML = `
+          <div class="n8f-auction__winner-card">
+            <span>Final Result</span>
+            <strong>Winner: ${this.escape(winnerName)}</strong>
+            <em>Winning bid: ${this.money(this.state.currentPrice)}</em>
+          </div>
+        `;
+        this.celebrateAuctionEnd();
+      } else if (!viewer) {
         identity.innerHTML = `
           <div class="n8f-auction__login-state"><strong>Not signed in</strong></div>
           <div class="n8f-auction__bidder-status">Sign in to bid. Your Auction Nickname is the only identity shown publicly.</div>
@@ -624,7 +642,34 @@ class N8ForgedAuction extends HTMLElement {
     if (adminPanel) adminPanel.hidden = !this.state.viewer?.isAdmin;
 
     this.renderBids(false);
-    this.toggleBidControls(this.state.status !== 'open');
+    this.toggleBidControls(ended || this.state.status !== 'open');
+  }
+
+  isAuctionEnded() {
+    const effectiveEnd = this.state.extensionEndsAt ? new Date(this.state.extensionEndsAt) : this.endsAt;
+    return this.state.status !== 'open' || (!Number.isNaN(effectiveEnd.getTime()) && Date.now() >= effectiveEnd.getTime());
+  }
+
+  winningBid() {
+    const currentPrice = Number(this.state.currentPrice || 0);
+    return [...this.state.bids]
+      .filter((bid) => Number(bid.amount) === currentPrice)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime() || Number(b.id || 0) - Number(a.id || 0))[0] || null;
+  }
+
+  celebrateAuctionEnd() {
+    if (this.celebratedAuctionEnd) return;
+    this.celebratedAuctionEnd = true;
+    const burst = document.createElement('div');
+    burst.className = 'n8f-auction__celebration';
+    burst.setAttribute('aria-hidden', 'true');
+    burst.innerHTML = Array.from({ length: 28 }, (_, index) => {
+      const delay = (index % 7) * 0.05;
+      const drift = ((index % 5) - 2) * 24;
+      return `<span style="--i:${index}; --delay:${delay}s; --drift:${drift}px;"></span>`;
+    }).join('');
+    document.body.appendChild(burst);
+    window.setTimeout(() => burst.remove(), 2200);
   }
 
   renderPresence() {
