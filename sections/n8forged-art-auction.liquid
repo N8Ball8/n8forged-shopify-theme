@@ -66,7 +66,10 @@
 
     <aside>
       <div class="n8f-auction__bid-card">
-        <p class="n8f-auction__price-label">Current bid</p>
+        <div class="n8f-auction__bid-card-header">
+          <p class="n8f-auction__price-label">Current bid</p>
+          <a class="n8f-auction__bid-history-link" href="#AuctionBidHistory">Bid History</a>
+        </div>
         <div class="n8f-auction__price" data-current-price>$0</div>
         <span class="n8f-auction__reserve" data-reserve-status data-met="false">○ Reserve not met</span>
 
@@ -204,7 +207,7 @@
     </div>
   </section>
 
-  <section class="n8f-auction__section">
+  <section class="n8f-auction__section" id="AuctionBidHistory">
     <div class="n8f-auction__shell">
       <div class="n8f-auction__section-heading">
         <div>

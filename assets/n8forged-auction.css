@@ -222,12 +222,35 @@
   box-shadow: 0 26px 70px rgba(0, 0, 0, 0.3);
 }
 
+.n8f-auction__bid-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .n8f-auction__price-label {
   margin: 0;
   color: var(--auction-muted);
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.n8f-auction__bid-history-link {
+  color: var(--auction-ink);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: right;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-transform: uppercase;
+}
+
+.n8f-auction__bid-history-link:hover,
+.n8f-auction__bid-history-link:focus-visible {
+  color: #82a4ff;
 }
 
 .n8f-auction__price {
