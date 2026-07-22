@@ -230,11 +230,14 @@
   text-transform: uppercase;
 }
 
+.n8f-auction__bid-history-row {
+  margin: -2px 0 12px;
+  text-align: right;
+}
+
 .n8f-auction__bid-history-link {
-  display: inline-block;
-  margin: 0 0 12px;
   color: var(--auction-ink);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 400;
   letter-spacing: 0.02em;
   text-decoration: underline;
