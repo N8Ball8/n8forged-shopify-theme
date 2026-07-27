@@ -8,16 +8,20 @@
   data-auction-id="{{ section.settings.auction_id | escape }}"
   data-ends-at="{{ section.settings.ends_at | escape }}"
 >
-  <div class="n8f-auction__test-banner" role="status">
-    <span>PRIVATE FAMILY TEST — NOT A LIVE AUCTION. All test bids will be erased.</span>
-    <a href="mailto:N8Darby@gmail.com?subject=N8Forged%20Auction%20Test%20-%20Bug%20or%20Enhancement%20Request">Log Bug / Enhancement Request</a>
-  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.N8ForgedTracking?.publish('view_auction', { auction_id: {{ section.settings.auction_id | json }}, placement: 'auction_page' });
+    }, { once: true });
+  </script>
   <header class="n8f-auction__hero">
     <div class="n8f-auction__shell n8f-auction__hero-grid">
       <div>
         <p class="n8f-auction__eyebrow">{{ section.settings.eyebrow }}</p>
         <h1>{{ section.settings.heading }}</h1>
         <div class="n8f-auction__intro">{{ section.settings.introduction }}</div>
+        {% assign auction_share_image = 'joy-in-our-chains-01.jpg' | asset_url | prepend: 'https:' %}
+        {% assign auction_share_url = request.origin | append: '/pages/contact?view=art-auction' %}
+        {% render 'n8forged-share', share_label: 'Share the auction', share_title: 'Bid on Joy in Our Chains: Support our Costa Rica mission', share_url: auction_share_url, share_image_url: auction_share_image %}
         <div class="n8f-auction__impact">
           <strong>100% of proceeds support our family’s Costa Rica mission trip.</strong>
           <span>2026 Costa Rica Mission Trip, Liberia, Costa Rica, October 28 - November 4.</span>
@@ -38,7 +42,7 @@
         </div>
         <div class="n8f-auction__clock">
           <div class="n8f-auction__clock-label">
-            <span><i class="n8f-auction__status-dot"></i>Family test active</span>
+            <span><i class="n8f-auction__status-dot"></i>Auction live</span>
             <span>Central Time</span>
           </div>
           <div class="n8f-auction__countdown" data-auction-countdown aria-label="Time remaining">
@@ -46,9 +50,10 @@
             <div><strong data-hours>00</strong><span>Hours</span></div>
             <div><strong data-minutes>00</strong><span>Minutes</span></div>
             <div><strong data-seconds>00</strong><span>Seconds</span></div>
+            <span class="n8f-auction__ended-ribbon" role="status">Auction Ended</span>
           </div>
           <p class="n8f-auction__close-copy" data-auction-deadline>
-            Scheduled to close August 15, 2026 at 8:00 PM Central. A bid in the final five minutes extends bidding by five minutes.
+            Scheduled to close August 9, 2026 at 8:00 PM Central. A bid in the final five minutes extends bidding by five minutes.
           </p>
         </div>
       </div>
@@ -160,23 +165,6 @@
     </div>
   </section>
 
-  <section class="n8f-auction__section n8f-auction__admin" data-admin-panel hidden>
-    <div class="n8f-auction__shell">
-      <p class="n8f-auction__kicker">Administrator only</p>
-      <h2>Family test controls</h2>
-      <div class="n8f-auction__admin-card">
-        <div>
-          <h3>Reset and start a fresh 24-hour test</h3>
-          <p>This permanently clears test bids, proxy maximums, extensions, queued test emails, winner state, and family test registrations. Your administrator account and final auction settings remain intact.</p>
-        </div>
-        <button class="n8f-auction__button" type="button" data-reset-test-auction>
-          Reset and Start 24-Hour Test
-        </button>
-      </div>
-      <p class="n8f-auction__feedback" data-admin-feedback aria-live="polite"></p>
-    </div>
-  </section>
-
   <section class="n8f-auction__section">
     <div class="n8f-auction__shell">
       <div class="n8f-auction__section-heading">
@@ -196,24 +184,24 @@
             height="938"
             loading="lazy"
           >
-          <button class="n8f-auction__hotspot is-active" type="button" style="--hotspot-x: 11.5%; --hotspot-y: 90.5%;" aria-label="Reveal the chains" aria-pressed="true" data-hotspot data-detail-title="Nine links and two wrist holds" data-detail-image="{{ 'joy-in-our-chains-08.jpg' | asset_url }}" data-detail-copy="The chain has nine links and two wrist holds, like the chain Paul wore while attached to soldier guards during his imprisonment—the chain displayed at the Basilica of Saint Paul in Rome."><span>1</span></button>
-          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 26.1%; --hotspot-y: 58.5%;" aria-label="Reveal the Roman pitcher" aria-pressed="false" data-hotspot data-detail-title="A Roman pitcher" data-detail-image="{{ 'joy-in-our-chains-03.jpg' | asset_url }}" data-detail-copy="The pitcher is styled after a vessel from 61 A.D. Its green patina suggests a living metal and represents Christ. Paul’s chain is attached firmly to it."><span>2</span></button>
-          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 54.1%; --hotspot-y: 66.4%;" aria-label="Reveal the liquid gold" aria-pressed="false" data-hotspot data-detail-title="Liquid gold poured out" data-detail-image="{{ 'joy-in-our-chains-03.jpg' | asset_url }}" data-detail-copy="The liquid gold recalls Philippians 2:17 and a life poured out as an offering. Even the soldier guards chained to Paul were ministered to by the words of Christ pouring through Paul’s writings."><span>3</span></button>
-          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 80.4%; --hotspot-y: 10.8%;" aria-label="Reveal the embedded letter" aria-pressed="false" data-hotspot data-detail-title="The entire letter" data-detail-image="{{ 'joy-in-our-chains-07.jpg' | asset_url }}" data-detail-copy="Pieces of the entire book of Philippians are embedded throughout the background of the artwork."><span>4</span></button>
-          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 77.2%; --hotspot-y: 53.9%;" aria-label="Reveal the journeys between Philippi and Rome" aria-pressed="false" data-hotspot data-detail-title="Journeys between Philippi and Rome" data-detail-image="{{ 'joy-in-our-chains-04.jpg' | asset_url }}" data-detail-copy="The loops represent the trips back and forth between Philippi and Rome by Paul, Timothy, and Epaphroditus."><span>5</span></button>
-          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 17.4%; --hotspot-y: 7.5%;" aria-label="Reveal the meaning of the red background" aria-pressed="false" data-hotspot data-detail-title="The red background" data-detail-image="{{ 'joy-in-our-chains-05.jpg' | asset_url }}" data-detail-copy="The red background symbolizes the blood of Christ."><span>6</span></button>
-          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 80.9%; --hotspot-y: 71.7%;" aria-label="Reveal the meaning of the black background" aria-pressed="false" data-hotspot data-detail-title="The black background" data-detail-image="{{ 'joy-in-our-chains-07.jpg' | asset_url }}" data-detail-copy="The black background represents the darkness of imprisonment and the hard times we face in life."><span>7</span></button>
+          <button class="n8f-auction__hotspot is-active" type="button" style="--hotspot-x: 11.5%; --hotspot-y: 90.5%;" aria-label="Reveal the chains" aria-pressed="true" data-hotspot data-detail-title="Nine links and two wrist holds" data-detail-image="{{ 'joy-in-our-chains-detail-chains.png' | asset_url }}" data-detail-copy="The chain has nine links and two wrist holds, like the chain Paul wore while attached to soldier guards during his imprisonment. This is the chain displayed at the Basilica of Saint Paul in Rome."><span>1</span></button>
+          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 17.4%; --hotspot-y: 7.5%;" aria-label="Reveal the meaning of the red background" aria-pressed="false" data-hotspot data-detail-title="The red background" data-detail-image="{{ 'joy-in-our-chains-detail-red-background-v3.png' | asset_url }}" data-detail-copy="The red background symbolizes the blood of Christ."><span>2</span></button>
+          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 26.1%; --hotspot-y: 58.5%;" aria-label="Reveal the Roman pitcher" aria-pressed="false" data-hotspot data-detail-title="A Roman pitcher" data-detail-image="{{ 'joy-in-our-chains-detail-green-pitcher.png' | asset_url }}" data-detail-copy="The pitcher is styled after a vessel from 61 A.D. Its green patina suggests a living metal and represents Christ. Paul’s chain is attached firmly to it."><span>3</span></button>
+          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 54.1%; --hotspot-y: 66.4%;" aria-label="Reveal the liquid gold" aria-pressed="false" data-hotspot data-detail-title="Liquid gold poured out" data-detail-image="{{ 'joy-in-our-chains-detail-gold.png' | asset_url }}" data-detail-copy="The liquid gold recalls Philippians 2:17 and a life poured out as an offering. Even the soldier guards chained to Paul were ministered to by the words of Christ pouring through Paul’s writings."><span>4</span></button>
+          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 77.2%; --hotspot-y: 53.9%;" aria-label="Reveal the journeys between Philippi and Rome" aria-pressed="false" data-hotspot data-detail-title="Journeys between Philippi and Rome" data-detail-image="{{ 'joy-in-our-chains-detail-journey.png' | asset_url }}" data-detail-copy="The loops represent the trips back and forth between Philippi and Rome by Paul, Timothy, and Epaphroditus."><span>5</span></button>
+          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 80.4%; --hotspot-y: 10.8%;" aria-label="Reveal the embedded letter" aria-pressed="false" data-hotspot data-detail-title="The entire letter" data-detail-image="{{ 'joy-in-our-chains-detail-letter.png' | asset_url }}" data-detail-copy="Pieces of the entire book of Philippians are embedded throughout the background of the artwork."><span>6</span></button>
+          <button class="n8f-auction__hotspot" type="button" style="--hotspot-x: 80.9%; --hotspot-y: 71.7%;" aria-label="Reveal the meaning of the black background" aria-pressed="false" data-hotspot data-detail-title="The black background" data-detail-image="{{ 'joy-in-our-chains-detail-black-background.png' | asset_url }}" data-detail-copy="The black background represents the darkness of imprisonment and the hard times we face in life."><span>7</span></button>
         </div>
 
         <aside class="n8f-auction__discovery-detail" aria-live="polite">
           <button class="n8f-auction__detail-image" type="button" data-discovery-zoom aria-label="View selected artwork detail full size">
-            <img src="{{ 'joy-in-our-chains-08.jpg' | asset_url }}" alt="" width="1400" height="1050" loading="lazy" data-discovery-image>
-            <span>Click to view full size ↗</span>
+            <img src="{{ 'joy-in-our-chains-detail-chains.png' | asset_url }}" alt="" width="731" height="251" loading="lazy" data-discovery-image>
+            <span>Click to view full size {% render 'n8forged-arrow-icon' %}</span>
           </button>
           <div class="n8f-auction__detail-copy">
             <p class="n8f-auction__kicker">Hidden detail <span data-discovery-number>01</span></p>
             <h3 data-discovery-title>Nine links and two wrist holds</h3>
-            <p data-discovery-copy>The chain has nine links and two wrist holds, like the chain Paul wore while attached to soldier guards during his imprisonment—the chain displayed at the Basilica of Saint Paul in Rome.</p>
+            <p data-discovery-copy>The chain has nine links and two wrist holds, like the chain Paul wore while attached to soldier guards during his imprisonment. This is the chain displayed at the Basilica of Saint Paul in Rome.</p>
           </div>
         </aside>
       </div>
@@ -383,7 +371,7 @@
       "type": "richtext",
       "id": "artist_story",
       "label": "Artist story",
-      "default": "<p>While writing to God’s people in Philippi, Paul had an attitude of humility and joy in the face of suffering. I too hope to consider others’ needs even when my own life appears hard, knowing Christ is our ultimate source of joy. I hope to continue to be bold for Christ—in life or in death.</p><p><strong>Inspired by Philippians 2:17 and Philippians 1:12–13 (NLT).</strong></p><p>“But I will rejoice even if I lose my life, pouring it out like a liquid offering to God, just like your faithful service is an offering to God. And I want all of you to share that joy.” — Philippians 2:17 NLT</p><p>“And I want you to know, my dear brothers and sisters, that everything that has happened to me here has helped to spread the Good News. For everyone here, including the whole palace guard, knows that I am in chains because of Christ.” — Philippians 1:12–13 NLT</p>"
+      "default": "<p>While writing to God’s people in Philippi, Paul had an attitude of humility and joy in the face of suffering. I too hope to consider others’ needs even when my own life appears hard, knowing Christ is our ultimate source of joy. I hope to continue to be bold for Christ, whether in life or in death.</p><p><strong>Inspired by Philippians 2:17 and Philippians 1:12–13 (NLT).</strong></p><p>“But I will rejoice even if I lose my life, pouring it out like a liquid offering to God, just like your faithful service is an offering to God. And I want all of you to share that joy.” (Philippians 2:17 NLT)</p><p>“And I want you to know, my dear brothers and sisters, that everything that has happened to me here has helped to spread the Good News. For everyone here, including the whole palace guard, knows that I am in chains because of Christ.” (Philippians 1:12–13 NLT)</p>"
     },
     {
       "type": "richtext",
@@ -401,8 +389,8 @@
       "type": "text",
       "id": "ends_at",
       "label": "Scheduled end (ISO 8601)",
-      "default": "2026-08-16T01:00:00Z",
-      "info": "August 15, 2026 at 8:00 PM Central"
+      "default": "2026-08-10T01:00:00Z",
+      "info": "August 9, 2026 at 8:00 PM Central"
     },
     {
       "type": "text",
@@ -422,7 +410,7 @@
       "type": "richtext",
       "id": "rules",
       "label": "Auction essentials",
-      "default": "<p>Bids are placed in $10 increments. The hidden reserve is met when a qualifying Maximum Bid reaches it. Bidding may extend in five-minute intervals. The winner has 48 hours to choose pickup in Little Rock, Arkansas or insured shipping and complete payment. Shipping, packing, insurance, taxes, duties, and customs charges are additional. Full terms are presented during registration.</p>"
+      "default": "<p>Bids are placed in $10 increments. The hidden reserve is met only when the public winning price reaches it. Bidding may extend in five-minute intervals. The winner has 48 hours to choose pickup in Little Rock, Arkansas or Northwest Arkansas, or insured shipping and complete payment. Shipping, packing, insurance, taxes, duties, and customs charges are additional. Full terms are presented during registration.</p>"
     }
   ],
   "blocks": [

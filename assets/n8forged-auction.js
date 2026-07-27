@@ -267,7 +267,7 @@ class N8ForgedAuction extends HTMLElement {
 
   async loadState() {
     if (!this.apiUrl) {
-      this.setFeedback('Preview mode — connect the auction service before launch.');
+      this.setFeedback('Preview mode. Connect the auction service before launch.');
       this.render();
       return;
     }
@@ -327,6 +327,12 @@ class N8ForgedAuction extends HTMLElement {
       this.state = { ...this.state, ...result.auction };
       await this.loadState();
       this.setFeedback(result.message || 'Your bid was placed successfully.');
+      window.N8ForgedTracking?.publish('place_bid', {
+        auction_id: this.auctionId,
+        bid_type: kind,
+        value: amount,
+        currency: 'USD',
+      });
       this.render();
     } catch (error) {
       this.setFeedback(error.message, true);
@@ -404,6 +410,10 @@ class N8ForgedAuction extends HTMLElement {
       this.querySelector('[data-auth-register]').hidden = true;
       this.querySelector('[data-auth-verify]').hidden = false;
       this.setAuthFeedback('Open the email and click “Confirm and return to the auction.”');
+      window.N8ForgedTracking?.publish('auction_registration', {
+        auction_id: this.auctionId,
+        registration_status: 'verification_sent',
+      });
     } catch (error) {
       this.setAuthFeedback(error.message, true);
     }
@@ -715,11 +725,15 @@ class N8ForgedAuction extends HTMLElement {
     list.innerHTML = bids
       .map((bid) => {
         const date = new Date(bid.createdAt);
+        const isAutomatic = bid.kind === 'automatic';
+        const activityLabel = isAutomatic ? 'Auto bid based on max bid' : 'Bid placed';
         return `<article class="n8f-auction__bid">
-          <strong>${this.escape(bid.nickname)}</strong>
+          <div class="n8f-auction__bid-person">
+            <strong>${this.escape(bid.nickname)}</strong>
+            <span class="n8f-auction__bid-kind${isAutomatic ? ' is-automatic' : ''}">${activityLabel}</span>
+          </div>
           <strong>${this.money(bid.amount)}</strong>
           <time datetime="${date.toISOString()}" title="${date.toLocaleString()}">${this.relativeTime(date)} · ${date.toLocaleString()}</time>
-          <span></span>
         </article>`;
       })
       .join('');

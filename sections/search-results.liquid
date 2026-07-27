@@ -44,6 +44,7 @@
 
       {% capture children %}
         {% for product in products %}
+          {% unless product.tags contains 'n8f-hidden' %}
           <li
             id="{{ section.id }}-{{ product.id }}"
             class="product-grid__item product-grid__item--{{ forloop.index0 }}"
@@ -58,6 +59,7 @@
               product_view_context: 'search'
             %}
           </li>
+          {% endunless %}
         {% endfor %}
       {% endcapture %}
 

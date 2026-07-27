@@ -6,9 +6,6 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
-    {% if template.suffix == 'art-auction' %}
-      <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    {% endif %}
     {%- if settings.favicon != blank -%}
       <link
         rel="icon"
@@ -38,6 +35,7 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
     {{ 'n8forged-global.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'n8forged-tracking.js' | asset_url }}" defer="defer"></script>
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}

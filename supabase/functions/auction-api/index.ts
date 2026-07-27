@@ -700,11 +700,12 @@ export default {
 
           const { data: events, error: eventsError } = await admin
             .from('bid_events')
-            .select('id, bidder_id, public_amount, created_at')
+            .select('id, bidder_id, public_amount, kind, created_at')
             .eq('auction_id', auction.id)
             .eq('is_valid', true)
             .in('kind', ['manual', 'automatic'])
             .order('created_at', { ascending: false })
+            .order('id', { ascending: false })
           if (eventsError) throw eventsError
 
           const bidderIds = [...new Set((events || []).map((event) => event.bidder_id).filter(Boolean))]
@@ -744,6 +745,7 @@ export default {
               id: event.id,
               nickname: nicknames.get(event.bidder_id) || 'Anonymous',
               amount: event.public_amount,
+              kind: event.kind,
               createdAt: event.created_at,
             })),
             viewer: viewerId && viewerProfile?.data

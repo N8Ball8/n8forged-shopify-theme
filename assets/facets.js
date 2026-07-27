@@ -177,7 +177,7 @@ class FacetsFormComponent extends Component {
    */
   #dispatchCollectionUpdateEvent(renderPromise) {
     // Build collection object with available identifiers
-    // Only use numeric IDs — non-numeric values like "all" fail GID validation
+    // Only use numeric IDs - non-numeric values like "all" fail GID validation
     /** @type {any} */
     const rawId = this.dataset.collectionId;
     const collectionData = {

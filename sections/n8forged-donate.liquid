@@ -1,0 +1,58 @@
+{{ 'n8forged-donate.css' | asset_url | stylesheet_tag }}
+
+<section class="n8f-donate" aria-labelledby="n8f-donate-title">
+  <div class="n8f-donate__shell">
+    <p class="n8f-donate__eyebrow">2026 Costa Rica mission</p>
+    <h1 id="n8f-donate-title">Give directly to the mission.</h1>
+    <p class="n8f-donate__intro">
+      Please don’t feel like you have to choose your favorite Darby. All three donation pages support the same family mission trip and everything ultimately lands in one big Darby bucket. We were required to have separate pages, so apparently this is now a friendly family fundraising competition nobody asked for. Supporting a mission is not only about meeting a financial need. Giving is also a meaningful way to participate in the work, serve alongside us, and become part of what God is doing through this trip. One honest FYI: if you donate through my page, I will absolutely tell my wife and daughter that you like me best. I’m just being honest.
+    </p>
+
+    <div class="n8f-donate__grid">
+      <article class="n8f-donate__card">
+        <span class="n8f-donate__number">01 / N8F</span>
+        <h2>Nathan</h2>
+        <p>Give securely through Nathan’s individual mission fundraising page.</p>
+        <a class="n8f-donate__button" href="https://fcsmnstry.io/m8/QJgZNVnLH2" target="_blank" rel="noopener" data-n8f-track-event="donation_click" data-n8f-track-person="Nathan" data-n8f-track-placement="donate_page">
+          Donate to Nathan <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span>
+        </a>
+      </article>
+
+      <article class="n8f-donate__card">
+        <span class="n8f-donate__number">02 / N8F</span>
+        <h2>Melissa</h2>
+        <p>Give securely through Melissa’s individual mission fundraising page.</p>
+        <a class="n8f-donate__button" href="https://fcsmnstry.io/m8/Q79kzslfLP" target="_blank" rel="noopener" data-n8f-track-event="donation_click" data-n8f-track-person="Melissa" data-n8f-track-placement="donate_page">
+          Donate to Melissa <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span>
+        </a>
+      </article>
+
+      <article class="n8f-donate__card">
+        <span class="n8f-donate__number">03 / N8F</span>
+        <h2>Alex</h2>
+        <p>Give securely through Alex’s individual mission fundraising page.</p>
+        <a class="n8f-donate__button" href="https://fcsmnstry.io/m8/NxY3GzSqDc" target="_blank" rel="noopener" data-n8f-track-event="donation_click" data-n8f-track-person="Alex" data-n8f-track-placement="donate_page">
+          Donate to Alex <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span>
+        </a>
+      </article>
+    </div>
+
+    <p class="n8f-donate__note">
+      <strong>Thank you for standing with us.</strong> If giving is not the right option for you, bidding on the artwork, buying a mission T-shirt, and praying for our team are equally meaningful ways to help.
+    </p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "N8Forged donate page",
+  "tag": "section",
+  "class": "n8forged-donate-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "N8Forged donate page"
+    }
+  ]
+}
+{% endschema %}

@@ -49,7 +49,7 @@ export function supportsViewTransitions() {
  * Remove check if every resolved.
  *
  * Note: the IIFE in view-transitions.js has an inline copy of this logic (it
- * runs before modules load) — keep the two in sync.
+ * runs before modules load) - keep the two in sync.
  * @param {string} [userAgent=navigator.userAgent] - User-agent string to test.
  *   Defaults to the live `navigator.userAgent`; pass an explicit value to keep
  *   the function pure and testable without overriding the browser UA.

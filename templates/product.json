@@ -192,6 +192,10 @@
               },
               "blocks": {}
             },
+            "shirt_type_selector": {
+              "type": "n8f-shirt-style-selector",
+              "settings": {}
+            },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
               "settings": {
@@ -304,6 +308,7 @@
           "block_order": [
             "group_icgrde",
             "divider_VJhene",
+            "shirt_type_selector",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
             "text_aEtTtq"

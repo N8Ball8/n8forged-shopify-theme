@@ -1,0 +1,67 @@
+{{ 'n8forged-support.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'n8forged-support.js' | asset_url }}" defer="defer"></script>
+
+<section class="n8f-support" id="support" aria-labelledby="n8f-support-title">
+  <div class="n8f-support__shell">
+    <div class="n8f-support__heading">
+      <p>Our 2026 Costa Rica mission</p>
+      <h2 id="n8f-support-title">Four ways you can support us</h2>
+      <span>From bidding and buying to giving and praying, every form of support helps send Nathan, Melissa, and Alex to serve in Liberia, Costa Rica.</span>
+    </div>
+
+    <div class="n8f-support__grid">
+      <article class="n8f-support__card">
+        <span class="n8f-support__number">01</span>
+        <p>Bid</p>
+        <h3>Bid on the original artwork</h3>
+        <span>Bid on <em>Joy in Our Chains</em>. Every dollar from the winning bid supports the mission trip.</span>
+        <a href="/pages/contact?view=art-auction" data-n8f-track-event="view_auction" data-n8f-track-placement="support_card">View the auction <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span></a>
+      </article>
+
+      <article class="n8f-support__card">
+        <span class="n8f-support__number">02</span>
+        <p>Buy</p>
+        <h3>Buy a mission T-shirt</h3>
+        <span>Wear the mission and help fund the journey through an original N8Forged design.</span>
+        <a href="{{ routes.all_products_collection_url }}" data-n8f-track-event="tshirt_shop_click" data-n8f-track-placement="support_card">Shop mission shirts <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span></a>
+      </article>
+
+      <article class="n8f-support__card">
+        <span class="n8f-support__number">03</span>
+        <p>Give</p>
+        <h3>Donate directly</h3>
+        <span>Learn how giving lets you participate in the mission, then choose any of our three donation links.</span>
+        <a href="/pages/donate" data-n8f-track-event="donation_page_click" data-n8f-track-placement="homepage_support">Visit the donation page <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span></a>
+      </article>
+
+      <article class="n8f-support__card">
+        <span class="n8f-support__number">04</span>
+        <p>Pray</p>
+        <h3>Pray for our team</h3>
+        <span>Prayer is not the last option. It is a meaningful way to stand with us before, during, and after the trip.</span>
+        <button
+          class="n8f-support__prayer-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="pray-for-us"
+          data-prayer-toggle
+        >
+          Prayer Needs <span aria-hidden="true" data-prayer-arrow>{% render 'n8forged-arrow-icon', direction: 'down' %}</span>
+        </button>
+      </article>
+    </div>
+
+    <div class="n8f-support__prayer" id="pray-for-us" hidden>
+      <div>
+        <p>Pray with us</p>
+        <h3>Help cover the mission in prayer.</h3>
+      </div>
+      <ul>
+        <li>For unity, health, and safe travel for the team.</li>
+        <li>For open doors to serve and share the hope of Christ.</li>
+        <li>For the churches, families, and communities we will meet.</li>
+        <li>For every financial need to be met with wisdom and gratitude.</li>
+      </ul>
+    </div>
+  </div>
+</section>

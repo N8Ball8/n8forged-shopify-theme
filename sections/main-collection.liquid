@@ -59,6 +59,7 @@
       {% paginate collection.products by products_per_page %}
         {% capture children %}
           {% for product in collection.products %}
+            {% unless product.tags contains 'n8f-hidden' %}
             <li
               id="{{ section.id }}-{{ product.id }}"
               class="product-grid__item product-grid__item--{{ forloop.index0 }}"
@@ -73,6 +74,7 @@
                 product_view_context: 'collection'
               %}
             </li>
+            {% endunless %}
           {% endfor %}
         {% endcapture %}
 
