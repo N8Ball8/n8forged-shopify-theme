@@ -269,7 +269,11 @@ for (const summary of summaries) {
       averageDistance: imageMatch.averageDistance.toFixed(2),
     });
   } catch (error) {
-    results.push({ handle, status: 'skipped', reason: error.message });
+    if (error.message === 'Printify product has no color option.') {
+      results.push({ handle, status: 'not-applicable', reason: error.message });
+    } else {
+      results.push({ handle, status: 'skipped', reason: error.message });
+    }
   }
 }
 
