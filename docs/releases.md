@@ -39,6 +39,8 @@ Routine release pull requests must not include a manual live-theme command.
 - No secrets or customer data are present.
 - Changelog and version agree.
 - Shopify integration completed without rejected files.
+- For the art auction, decide whether admin BCC copies should remain enabled
+  before going live, since each BCC counts toward Resend email usage.
 - Production smoke test passed.
 - Rollback target is known before release.
 

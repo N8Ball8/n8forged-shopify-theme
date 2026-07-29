@@ -46,7 +46,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
    * True when the event was dispatched from outside this cart-items-component (e.g.
    * `Shopify.actions.updateCart(...)` from an external app, or the SFAPI default
    * handler). Internal dispatchers (cart-discount-component, cart-note) live inside
-   * `this` and either morph the section themselves or don't need a refresh — running
+   * `this` and either morph the section themselves or don't need a refresh - running
    * a fallback render in that case double-renders and can clobber form state.
    * @param {Event} event
    */
@@ -66,7 +66,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         } else if (external) {
           // External caller (Shopify.actions.updateCart or SFAPI default handler) didn't
           // attach sections; refetch so the discount UI reflects the post-mutation cart.
-          // Internal cart-discount-component morphs the section itself — no fallback needed.
+          // Internal cart-discount-component morphs the section itself - no fallback needed.
           sectionRenderer.renderSection(this.sectionId, {
             cache: false,
             mode: this.isDrawer ? 'hydration' : 'full',
@@ -80,7 +80,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
 
   /** @param {CartNoteUpdateEvent} event */
   #handleNoteUpdate = (event) => {
-    // Internal cart-note dispatches don't need a section refresh — the user typed the
+    // Internal cart-note dispatches don't need a section refresh - the user typed the
     // value and the textarea retains it. Only external callers need the UI synced.
     if (!this.#isExternalCartUpdate(event)) return;
     event.promise

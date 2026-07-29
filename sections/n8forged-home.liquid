@@ -14,9 +14,8 @@
         <div class="n8f-actions">
           <a class="n8f-button n8f-button--primary" href="{{ section.settings.primary_link }}">
             {{ section.settings.primary_label }}
-            <span aria-hidden="true">↗</span>
+            <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span>
           </a>
-          <a class="n8f-button n8f-button--secondary" href="#mission">{{ section.settings.secondary_label }}</a>
         </div>
         <ul class="n8f-proof" role="list">
           <li><span aria-hidden="true">01</span> Original designs</li>
@@ -46,6 +45,53 @@
     </div>
   </section>
 
+  {% render 'n8forged-support-paths' %}
+
+  {% if section.settings.show_auction_promo %}
+    <section
+      class="n8f-auction-promo"
+      aria-labelledby="n8f-auction-promo-title"
+      data-auction-promo
+      data-ends-at="2026-08-10T01:00:00Z"
+    >
+      <div class="n8f-shell n8f-auction-promo__inner">
+        <div>
+          <p class="n8f-kicker">Live mission art auction</p>
+          <h2 id="n8f-auction-promo-title">{{ section.settings.auction_heading }}</h2>
+          <p>Bid on Andrea’s donated original painting. 100% of the winning bid supports our family’s Costa Rica mission trip.</p>
+        </div>
+        <div class="n8f-auction-promo__action">
+          <p data-auction-promo-countdown>Ends August 9 at 8 PM Central</p>
+          <a class="n8f-button n8f-button--primary" href="{{ section.settings.auction_link }}" data-n8f-track-event="view_auction" data-n8f-track-placement="homepage_promo">
+            View the art auction
+            <span aria-hidden="true">{% render 'n8forged-arrow-icon' %}</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    <script>
+      (() => {
+        const promo = document.querySelector('[data-auction-promo]');
+        const output = promo?.querySelector('[data-auction-promo-countdown]');
+        if (!promo || !output) return;
+        const end = new Date(promo.dataset.endsAt).getTime();
+        const update = () => {
+          const remaining = Math.max(0, end - Date.now());
+          if (remaining === 0) {
+            output.textContent = 'Auction scheduled to close';
+            return;
+          }
+          const days = Math.floor(remaining / 86400000);
+          const hours = Math.floor((remaining / 3600000) % 24);
+          const minutes = Math.floor((remaining / 60000) % 60);
+          output.textContent = `${days}d ${hours}h ${minutes}m remaining`;
+        };
+        update();
+        window.setInterval(update, 60000);
+      })();
+    </script>
+  {% endif %}
+
   <section id="mission" class="n8f-mission" aria-labelledby="n8f-mission-title">
     <div class="n8f-shell n8f-mission__grid">
       <div>
@@ -67,20 +113,34 @@
             <p class="n8f-kicker">Launch collection</p>
             <h2 id="n8f-products-title">Wear the mission</h2>
           </div>
-          <a href="{{ section.settings.collection.url }}">View all <span aria-hidden="true">→</span></a>
+          <a href="{{ section.settings.collection.url }}" data-n8f-track-event="tshirt_shop_click" data-n8f-track-placement="homepage_collection">View all <span aria-hidden="true">{% render 'n8forged-arrow-icon', direction: 'right' %}</span></a>
         </div>
         <div class="n8f-product-grid">
           {% if section.settings.collection.products_count > 0 %}
             {% for product in section.settings.collection.products limit: section.settings.product_limit %}
+              {% unless product.tags contains 'n8f-hidden' %}
+              {% liquid
+                assign card_image = blank
+                for variant in product.variants
+                  assign variant_title_lower = variant.title | downcase
+                  if variant.available and variant.featured_image != blank
+                    unless variant_title_lower contains 'white' or variant_title_lower contains 'black'
+                      assign card_image = variant.featured_image
+                      break
+                    endunless
+                  endif
+                endfor
+                assign card_image = card_image | default: product.featured_image
+              %}
               <article class="n8f-product-card">
                 <a href="{{ product.url }}" aria-label="{{ product.title | escape }}">
                   <div class="n8f-product-card__media">
-                    {% if product.featured_image %}
-                      {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 25vw, 50vw', alt: product.featured_image.alt | default: product.title }}
+                    {% if card_image %}
+                      {{ card_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 25vw, 50vw', alt: card_image.alt | default: product.title }}
                     {% else %}
                       {{ 'product-apparel-1' | placeholder_svg_tag: 'n8f-placeholder' }}
                     {% endif %}
-                    <span class="n8f-product-card__action" aria-hidden="true">↗</span>
+                    <span class="n8f-product-card__action" aria-hidden="true">{% render 'n8forged-arrow-icon', size: 15 %}</span>
                   </div>
                   <div class="n8f-product-card__info">
                     <h3>{{ product.title }}</h3>
@@ -88,6 +148,7 @@
                   </div>
                 </a>
               </article>
+              {% endunless %}
             {% endfor %}
           {% else %}
             <div class="n8f-products-empty">
@@ -160,19 +221,19 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Wear the mission. Help move it forward."
+      "default": "Four ways to help send us."
     },
     {
       "type": "richtext",
       "id": "body",
       "label": "Introduction",
-      "default": "<p>This first N8Forged collection is built to help fund a mission trip to Costa Rica. Your purchase supports the journey—and helps launch what comes next.</p>"
+      "default": "<p>Nathan, Melissa, and Alex are going to Liberia, Costa Rica, to serve alongside a local church. You can support the mission by bidding on original artwork, buying a T-shirt, giving directly, or praying with us.</p>"
     },
     {
       "type": "text",
       "id": "primary_label",
       "label": "Primary button label",
-      "default": "Shop the mission"
+      "default": "See the four ways"
     },
     {
       "type": "url",
@@ -180,10 +241,22 @@
       "label": "Primary button link"
     },
     {
+      "type": "checkbox",
+      "id": "show_auction_promo",
+      "label": "Show art auction promotion",
+      "default": false,
+      "info": "Keep disabled until the auction page is approved and ready."
+    },
+    {
       "type": "text",
-      "id": "secondary_label",
-      "label": "Secondary button label",
-      "default": "Why Costa Rica"
+      "id": "auction_heading",
+      "label": "Auction promotion heading",
+      "default": "One original painting. One meaningful journey."
+    },
+    {
+      "type": "url",
+      "id": "auction_link",
+      "label": "Auction page link"
     },
     {
       "type": "text",

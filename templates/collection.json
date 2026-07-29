@@ -11,12 +11,37 @@
     "section": {
       "type": "section",
       "blocks": {
+        "mission_eyebrow": {
+          "type": "text",
+          "name": "Mission label",
+          "settings": {
+            "text": "<p>COSTA RICA 2026</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "0.75rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "text_tqQTNE": {
           "type": "text",
           "name": "Title",
           "settings": {
-            "text": "<h1>{{ closest.collection.title }}</h1>",
-            "width": "fit-content",
+            "text": "<h1>Wear the Mission</h1>",
+            "width": "100%",
             "max_width": "normal",
             "alignment": "left",
             "type_preset": "h2",
@@ -35,12 +60,36 @@
           },
           "blocks": {}
         },
+        "mission_pricing_note": {
+          "type": "text",
+          "name": "Mission pricing note",
+          "settings": {
+            "text": "<p>We know, you've seen cheaper T-shirts. Those T-shirts, however, are not helping anyone get to Costa Rica. Part of your purchase covers the shirt, printing, and fulfillment, the unglamorous trio that insists on being paid. A meaningful portion helps fund the mission. So you're not just buying something to wear; you're helping send good work somewhere it needs to go. Not bad for a T-shirt.</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 4,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "text_twGGkJ": {
           "type": "text",
           "name": "Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
-            "width": "fit-content",
+            "width": "100%",
             "max_width": "normal",
             "alignment": "left",
             "type_preset": "rte",
@@ -61,7 +110,9 @@
         }
       },
       "block_order": [
+        "mission_eyebrow",
         "text_tqQTNE",
+        "mission_pricing_note",
         "text_twGGkJ"
       ],
       "name": "Collection heading",
@@ -88,8 +139,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-start": 24,
+        "padding-block-end": 24
       }
     },
     "main": {
@@ -99,7 +150,7 @@
           "type": "filters",
           "static": true,
           "settings": {
-            "enable_filtering": true,
+            "enable_filtering": false,
             "filter_style": "horizontal",
             "filter_width": "centered",
             "text_label_case": "default",

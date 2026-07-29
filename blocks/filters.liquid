@@ -72,7 +72,7 @@
     assign should_use_select_on_mobile = false
   endif
 
-  # Use collection.id if available (normal collection). Don't fall back to handle — non-numeric IDs fail GID validation.
+  # Use collection.id if available (normal collection). Don't fall back to handle - non-numeric IDs fail GID validation.
   assign collection_id = results.id | default: collection.id
 -%}
 

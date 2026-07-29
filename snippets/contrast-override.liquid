@@ -9,15 +9,15 @@
   Effective text colors are exposed as CSS custom properties in color-palette.liquid.
 
   Presets control which token categories of CSS variables are emitted:
-  - 'content' (default) — base + text + border + form-disabled + accent
+  - 'content' (default) - base + text + border + form-disabled + accent
                           (the original content-rich behaviour used by sections/blocks)
-  - 'ui'                — base + text + border + form-disabled
+  - 'ui' - base + text + border + form-disabled
                           (lightweight UI surfaces: popover, drawer, badges)
 
   Form tokens that exist only on .color-custom-{id} (never on .text-block prose
   containers): --input-disabled-*, --checkbox-border.
 
-  Input chrome (--color-input-*) is not emitted by this snippet — inputs use the
+  Input chrome (--color-input-*) is not emitted by this snippet - inputs use the
   global Input Fields settings defined in color-palette.liquid across all surfaces.
 
   @param {string} [background_color] - Custom background color. Nothing is output when blank or fully transparent (alpha == 0).
@@ -113,7 +113,7 @@
       {% render 'brightness-opacities', background: background_color %}
 
       {% unless skip_contrast %}
-        /* Foreground / text — explicit or smart-contrasted */
+        /* Foreground / text - explicit or smart-contrasted */
         --color: {{ effective_text_color }};
         --color-rgb: {{ effective_text_color_rgb }};
         --color-foreground: {{ effective_text_color }};
@@ -127,7 +127,7 @@
 
     {% unless skip_contrast %}
       .color-custom-{{ section_id }} {
-        /* Form-related tokens stay on .color-custom only — .text-block is a prose
+        /* Form-related tokens stay on .color-custom only - .text-block is a prose
            container (text/announcement/inline-text/blog-post-description/
            collection-link/price/sku) and never holds form inputs. */
         --input-disabled-background-color: rgb({{ effective_text_color_rgb }} / var(--opacity-10));

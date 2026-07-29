@@ -318,10 +318,10 @@ class GiftCardRecipientForm extends Component {
     if (code !== 'INVALID') return;
 
     if (detail?.errors && typeof detail.errors === 'object') {
-      // Structured field-level errors — display per-field messages and announce
+      // Structured field-level errors - display per-field messages and announce
       this.#displayErrorMessage(error || 'There was an error', detail.errors);
     } else if (error) {
-      // Generic INVALID error without structured payload — still announce to screen readers
+      // Generic INVALID error without structured payload - still announce to screen readers
       this.#displayErrorMessage(error, {});
     }
   }

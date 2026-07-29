@@ -33,7 +33,6 @@
 
     {% paginate search.results by products_per_page %}
       {% if search.results_count > 0 %}
-        {% content_for 'block', type: 'filters', id: 'filters', results: search, results_size: search.results_count %}
         {% assign products = search.results | where: 'object_type', 'product' %}
       {% else %}
         {% assign collection = settings.empty_state_collection | default: collections.all %}
@@ -42,24 +41,37 @@
         {% assign products = collection.products %}
       {% endif %}
 
+      {% assign visible_products_count = 0 %}
       {% capture children %}
         {% for product in products %}
-          <li
-            id="{{ section.id }}-{{ product.id }}"
-            class="product-grid__item product-grid__item--{{ forloop.index0 }}"
-            data-page="{{ paginate.current_page }}"
-            data-product-id="{{ product.id }}"
-            ref="cards[]"
-          >
-            {% content_for 'block',
-              type: '_product-card',
-              id: 'product-card',
-              closest.product: product,
-              product_view_context: 'search'
-            %}
-          </li>
+          {% unless product.tags contains 'n8f-hidden' %}
+            {% capture product_card_markup %}
+              {% content_for 'block',
+                type: '_product-card',
+                id: 'product-card',
+                closest.product: product,
+                product_view_context: 'search'
+              %}
+            {% endcapture %}
+            {% if product_card_markup contains '<product-card' %}
+              <li
+                id="{{ section.id }}-{{ product.id }}"
+                class="product-grid__item product-grid__item--{{ visible_products_count }}"
+                data-page="{{ paginate.current_page }}"
+                data-product-id="{{ product.id }}"
+                ref="cards[]"
+              >
+                {{ product_card_markup }}
+              </li>
+              {% assign visible_products_count = visible_products_count | plus: 1 %}
+            {% endif %}
+          {% endunless %}
         {% endfor %}
       {% endcapture %}
+
+      {% if search.results_count > 0 %}
+        {% content_for 'block', type: 'filters', id: 'filters', results: search, results_size: visible_products_count %}
+      {% endif %}
 
       {% render 'product-grid',
         section: section,

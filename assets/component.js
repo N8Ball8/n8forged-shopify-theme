@@ -290,11 +290,10 @@ function registerEventListeners() {
 
           if (!(instance instanceof Component)) {
             // Surface the drop instead of swallowing it. This typically means the
-            // module defining `<{tagName}>` hasn't yet been parsed/executed —
-            // a real bug for users on slow connections, and the silent failure
+            // module defining `<{tagName}>` hasn't yet been parsed/executed -             // a real bug for users on slow connections, and the silent failure
             // mode that has caused the bulk of recent Playwright flakes.
             console.warn(
-              `[component] Dropped "${event.type}" on <${instance.tagName.toLowerCase()}> — element not yet upgraded`
+              `[component] Dropped "${event.type}" on <${instance.tagName.toLowerCase()}> - element not yet upgraded`
             );
             return;
           }

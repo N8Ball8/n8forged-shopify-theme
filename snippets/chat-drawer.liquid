@@ -2,7 +2,7 @@
   Chat Drawer
 
   Renders a theme-drawer host for `<shopify-chat>`. The markup is always
-  present — when the Inbox app is installed it registers the custom element
+  present - when the Inbox app is installed it registers the custom element
   and the chat activates. Without Inbox the element is inert.
 
   @example
@@ -33,9 +33,9 @@
   document.addEventListener('theme-drawer:close', (event) => {
     if (/** @type {Element} */ (event.target).id !== 'chat-drawer') return;
     // If mode is still managed, this is a theme-initiated close (backdrop /
-    // Escape) — close the chat so the FAB appears. If mode is already
+    // Escape) - close the chat so the FAB appears. If mode is already
     // standalone, the close was triggered by an undock (enter-standalone sets
-    // mode before closing the drawer) — leave the chat open as a floating panel.
+    // mode before closing the drawer) - leave the chat open as a floating panel.
     if (shopifyChat?.getAttribute('mode') === 'managed') {
       shopifyChat?.removeAttribute('open');
     }
@@ -43,7 +43,7 @@
   });
 
   document.addEventListener('shopify-chat:enter-managed', () => {
-    // Captured at event-fire time — the dock-transition animation hint below
+    // Captured at event-fire time - the dock-transition animation hint below
     // depends on state as it was when the event was dispatched.
     const isStandaloneAndOpen = shopifyChat?.hasAttribute('open') && shopifyChat?.getAttribute('mode') === 'standalone';
 
@@ -81,7 +81,7 @@
 
   // After the chat upgrades it self-restores its preferred mode from
   // sessionStorage. Reconcile any mismatch with the theme-drawer's state
-  // — the drawer is the source of truth for which mode the chat should
+  // - the drawer is the source of truth for which mode the chat should
   // be in (open → managed, closed → standalone).
   customElements.whenDefined('shopify-chat').then(() => {
     const mode = chatDrawer?.hasAttribute('open') ? 'managed' : 'standalone';
@@ -100,7 +100,7 @@
 {% stylesheet %}
   /* Pin the chat's mobile/desktop boundary so the theme and the chat agree
      on where standalone mode kicks in. Must stay in sync with the @media
-     query below — @shopify/storefront-components reads this value once at
+     query below - @shopify/storefront-components reads this value once at
      init and uses it to decide when to force standalone mode. */
   shopify-chat {
     --shopify-chat-breakpoint: 768px;
