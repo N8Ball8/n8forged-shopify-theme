@@ -158,7 +158,7 @@
     property="og:image:alt"
     content="{{ product.title | escape }}"
   >
-{%- elsif page_image != blank -%}
+{%- elsif page_image != blank and page_image.width != blank -%}
   <meta
     property="og:image"
     content="http:{{ page_image | image_url }}"
