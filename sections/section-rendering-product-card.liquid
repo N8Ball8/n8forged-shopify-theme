@@ -17,13 +17,7 @@
     endif
   endif
 
-  assign url = product.selected_or_first_available_variant.url
-  unless url
-    assign url = product.first_available_variant.url
-  endunless
-  unless url
-    assign url = product.url
-  endunless
+  assign url = product.url
 
   assign sku = product.selected_or_first_available_variant.sku
 %}
