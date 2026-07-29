@@ -1,0 +1,51 @@
+.n8f-support {
+  --support-bg: #080c16;
+  --support-card: #101726;
+  --support-line: rgba(106, 138, 220, 0.22);
+  --support-ink: #f4f7ff;
+  --support-muted: #a6b1c5;
+  --support-accent: #6f92ff;
+  padding: clamp(72px, 9vw, 124px) 0;
+  border-block: 1px solid var(--support-line);
+  color: var(--support-ink);
+  background: radial-gradient(circle at 50% 0, rgba(56, 94, 205, 0.16), transparent 38%), var(--support-bg);
+}
+
+.n8f-support *, .n8f-support *::before, .n8f-support *::after { box-sizing: border-box; }
+.n8f-support__shell { width: min(100% - 40px, 1280px); margin-inline: auto; }
+.n8f-support__heading { max-width: 820px; margin-bottom: 42px; }
+.n8f-support__heading p, .n8f-support__card > p, .n8f-support__prayer p { margin: 0; color: var(--support-accent); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+.n8f-support__heading h2 { margin: 14px 0 18px; color: var(--support-ink); font-size: clamp(2.35rem, 5vw, 4.5rem); line-height: 1; letter-spacing: -0.045em; }
+.n8f-support__heading > span { display: block; max-width: 720px; color: var(--support-muted); font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.7; }
+.n8f-support__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.n8f-support__card { position: relative; min-height: 350px; padding: 28px; display: flex; flex-direction: column; border: 1px solid var(--support-line); border-radius: 14px; background: linear-gradient(145deg, rgba(40, 68, 145, 0.1), rgba(8, 12, 22, 0.7)), var(--support-card); }
+.n8f-support__number { position: absolute; top: 24px; right: 24px; color: #71809b; font: 0.72rem/1 monospace; }
+.n8f-support__card h3 { margin: 18px 0 14px; color: var(--support-ink); font-size: 1.5rem; line-height: 1.12; letter-spacing: -0.025em; }
+.n8f-support__card > span:not(.n8f-support__number) { color: var(--support-muted); font-size: 0.9rem; line-height: 1.65; }
+.n8f-support__card em { color: var(--support-ink); }
+.n8f-support__card > a,
+.n8f-support__prayer-toggle { margin-top: auto; padding: 28px 0 0; display: flex; justify-content: space-between; gap: 18px; border: 0; color: #9fb6ff; background: transparent; font: inherit; font-size: 0.86rem; font-weight: 800; text-align: left; text-decoration: none; cursor: pointer; }
+.n8f-support__donations { margin-top: auto; padding-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.n8f-support__donations a { padding: 10px 6px; border: 1px solid rgba(111, 146, 255, 0.34); border-radius: 7px; color: #dce5ff; background: rgba(111, 146, 255, 0.08); font-size: 0.72rem; font-weight: 800; text-align: center; text-decoration: none; }
+.n8f-support__card a:hover,
+.n8f-support__card a:focus-visible,
+.n8f-support__prayer-toggle:hover,
+.n8f-support__prayer-toggle:focus-visible { color: #fff; border-color: rgba(111, 146, 255, 0.72); }
+.n8f-support__prayer { margin-top: 14px; padding: clamp(26px, 4vw, 46px); display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(30px, 7vw, 90px); align-items: start; border: 1px solid rgba(102, 224, 149, 0.24); border-radius: 14px; background: linear-gradient(120deg, rgba(102, 224, 149, 0.1), rgba(16, 23, 38, 0.88)); scroll-margin-top: 100px; }
+.n8f-support__prayer[hidden] { display: none; }
+[data-prayer-arrow] { display: inline-flex; transition: transform 0.2s ease; }
+[data-prayer-arrow].is-open { transform: rotate(180deg); }
+.n8f-support__prayer p { color: #85e8aa; }
+.n8f-support__prayer h3 { margin: 12px 0 0; color: var(--support-ink); font-size: clamp(1.7rem, 3vw, 2.65rem); line-height: 1.08; letter-spacing: -0.035em; }
+.n8f-support__prayer ul { margin: 0; padding-left: 1.15rem; color: var(--support-muted); line-height: 1.75; }
+.n8f-support__prayer li + li { margin-top: 5px; }
+
+@media (max-width: 989px) {
+  .n8f-support__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 599px) {
+  .n8f-support__shell { width: min(100% - 28px, 1280px); }
+  .n8f-support__grid, .n8f-support__prayer { grid-template-columns: 1fr; }
+  .n8f-support__card { min-height: 300px; }
+}

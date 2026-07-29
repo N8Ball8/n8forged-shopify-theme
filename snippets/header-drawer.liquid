@@ -541,6 +541,7 @@
                               {% else %}
                                 {% paginate featured_products_collection.products by max_featured_items %}
                                   {%- for product in featured_products_collection.products limit: max_featured_items -%}
+                                    {%- unless product.tags contains 'n8f-hidden' -%}
                                     <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
                                       {% render 'resource-card',
                                         resource: product,
@@ -550,6 +551,7 @@
                                         product_view_context: 'dialog'
                                       %}
                                     </li>
+                                    {%- endunless -%}
                                   {%- endfor -%}
                                 {% endpaginate %}
                               {% endif %}
@@ -748,6 +750,7 @@
             {% elsif top_level_featured_products_collection.products_count > 0 %}
               {% paginate top_level_featured_products_collection.products by max_featured_items %}
                 {%- for product in top_level_featured_products_collection.products limit: max_featured_items -%}
+                  {%- unless product.tags contains 'n8f-hidden' -%}
                   <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
                     {% render 'resource-card',
                       resource: product,
@@ -757,6 +760,7 @@
                       product_view_context: 'dialog'
                     %}
                   </li>
+                  {%- endunless -%}
                 {%- endfor -%}
               {% endpaginate %}
             {% endif %}

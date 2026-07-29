@@ -17,21 +17,83 @@
   name="theme-color"
   content=""
 >
-
 {%- liquid
   assign og_title = page_title | default: shop.name
-  assign og_url = canonical_url | default: request.origin
+  assign seo_canonical_url = canonical_url | default: request.origin
+  assign og_url = seo_canonical_url
   assign og_type = 'website'
-  assign og_description = page_description | default: shop.description | default: shop.name
+  assign seo_description = page_description | default: shop.description | default: shop.name
+  assign seo_noindex = false
+  assign custom_og_image = blank
+  assign custom_og_image_width = blank
+  assign custom_og_image_height = blank
+  assign custom_og_image_alt = blank
+  assign product_social_image = blank
+
+  if request.page_type == 'index'
+    assign og_title = 'N8Forged: Support our Costa Rica mission'
+    assign og_url = request.origin | append: '/?campaign=costa-rica-2026'
+    assign seo_description = 'Bid on original artwork, buy a mission T-shirt, donate directly, or pray with Nathan, Melissa, and Alex as they prepare to serve in Costa Rica.'
+    assign custom_og_image = 'joy-in-our-chains-01.jpg' | asset_url | prepend: 'https:'
+    assign custom_og_image_width = 1400
+    assign custom_og_image_height = 938
+    assign custom_og_image_alt = 'Joy in Our Chains, an original painting supporting the N8Forged Costa Rica mission'
+  elsif template.suffix == 'art-auction'
+    assign og_title = 'Bid on Joy in Our Chains: Support our Costa Rica mission'
+    assign og_url = request.origin | append: '/pages/contact?view=art-auction'
+    assign seo_canonical_url = og_url
+    assign seo_description = 'Bid on Andrea Darby’s original painting, Joy in Our Chains. Every dollar from the winning bid supports our family’s 2026 Costa Rica mission trip.'
+    assign custom_og_image = 'joy-in-our-chains-01.jpg' | asset_url | prepend: 'https:'
+    assign custom_og_image_width = 1400
+    assign custom_og_image_height = 938
+    assign custom_og_image_alt = 'Joy in Our Chains, an original painting by Andrea Darby'
+  elsif request.page_type == 'collection' and collection.handle == 'all'
+    assign seo_description = 'Shop N8Forged mission T-shirts and journals. Every purchase helps support Nathan, Melissa, and Alex as they prepare to serve in Costa Rica.'
+  elsif request.page_type == 'page' and page.handle == 'contact'
+    assign seo_description = 'Contact N8Forged with questions about orders, mission T-shirts, donations, the art auction, or our Costa Rica mission trip.'
+  elsif request.page_type == 'page' and page.handle == 'donate'
+    assign seo_description = 'Support the Darby family’s Costa Rica mission through a secure donation. Every gift joins Nathan, Melissa, and Alex in serving alongside local ministries.'
+  endif
 
   if request.page_type == 'product'
     assign og_type = 'product'
+    assign product_social_image = product.selected_or_first_available_variant.featured_image | default: page_image
+    if product.handle == 'poor-reception-hoodie'
+      assign seo_description = 'Shop the Poor Reception Christian hoodie, featuring a fading signal design and faith-filled message. Your purchase supports our Costa Rica mission.'
+    elsif product.handle == 'poor-reception-premium'
+      assign seo_description = 'Shop the Poor Reception unisex Christian T-shirt, featuring a fading signal design and a reminder to listen for God’s calling.'
+    else
+      capture product_seo_description
+        echo 'Shop '
+        echo product.title
+        echo ' from N8Forged. Every purchase helps support Nathan, Melissa, and Alex as they prepare to serve in Costa Rica.'
+      endcapture
+      assign seo_description = product_seo_description | strip | truncate: 155
+    endif
+
+    if product.tags contains 'n8f-hidden'
+      assign seo_noindex = true
+    endif
   elsif request.page_type == 'article'
     assign og_type = 'article'
   elsif request.page_type == 'password'
     assign og_url = request.origin
   endif
+
+  if request.page_type == 'blog' and blog.handle == 'news'
+    assign seo_noindex = true
+  elsif request.page_type == 'collection' and collection.handle == 'featured'
+    assign seo_noindex = true
+  elsif request.path contains '/policies/'
+    assign seo_noindex = true
+  endif
+
+  assign og_description = seo_description
 %}
+
+{%- if seo_noindex -%}
+  <meta name="robots" content="noindex, follow">
+{%- endif -%}
 
 <meta
   property="og:site_name"
@@ -54,7 +116,49 @@
   content="{{ og_description | escape }}"
 >
 
-{%- if page_image -%}
+{%- if custom_og_image != blank -%}
+  <meta
+    property="og:image"
+    content="{{ custom_og_image }}"
+  >
+  <meta
+    property="og:image:secure_url"
+    content="{{ custom_og_image }}"
+  >
+  <meta
+    property="og:image:width"
+    content="{{ custom_og_image_width }}"
+  >
+  <meta
+    property="og:image:height"
+    content="{{ custom_og_image_height }}"
+  >
+  <meta
+    property="og:image:alt"
+    content="{{ custom_og_image_alt | escape }}"
+  >
+{%- elsif product_social_image -%}
+  <meta
+    property="og:image"
+    content="http:{{ product_social_image | image_url }}"
+  >
+  <meta
+    property="og:image:secure_url"
+    content="https:{{ product_social_image | image_url }}"
+  >
+  <meta
+    property="og:image:width"
+    content="{{ product_social_image.width }}"
+  >
+  <meta
+    property="og:image:height"
+    content="{{ product_social_image.height }}"
+  >
+  <meta
+    property="og:image:alt"
+    content="{{ product.title | escape }}"
+  >
+{%- elsif page_image -%}
   <meta
     property="og:image"
     content="http:{{ page_image | image_url }}"
@@ -102,9 +206,20 @@
   name="twitter:description"
   content="{{ og_description | escape }}"
 >
+{% if custom_og_image != blank %}
+  <meta
+    name="twitter:image"
+    content="{{ custom_og_image }}"
+  >
+{% elsif product_social_image != blank %}
+  <meta
+    name="twitter:image"
+    content="https:{{ product_social_image | image_url }}"
+  >
+{% endif %}
 
 <title>
-  {{ page_title }}
+  {{ og_title }}
   {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
   {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
   {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
@@ -112,12 +227,12 @@
 
 <link
   rel="canonical"
-  href="{{ canonical_url }}"
+  href="{{ seo_canonical_url }}"
 >
 
-{% if page_description %}
+{% unless seo_noindex %}
   <meta
     name="description"
-    content="{{ page_description | escape }}"
+    content="{{ seo_description | escape }}"
   >
-{% endif %}
+{% endunless %}

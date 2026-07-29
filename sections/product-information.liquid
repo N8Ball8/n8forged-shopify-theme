@@ -2,6 +2,8 @@
   {{ closest.product | structured_data }}
 </script>
 
+{% comment %}T-shirt sharing is rendered inside the product header block beneath the title.{% endcomment %}
+
 {% capture media_gallery %}
   {%- content_for 'block',
     type: '_product-media-gallery',
@@ -172,6 +174,12 @@
   media_gallery: media_gallery,
   product_details: product_details,
   additional_blocks: additional_blocks
+%}
+
+{% render 'n8forged-share',
+  share_label: 'Share this T-shirt',
+  share_title: closest.product.title,
+  share_image: closest.product.selected_or_first_available_variant.featured_image
 %}
 
 {% stylesheet %}

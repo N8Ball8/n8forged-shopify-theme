@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "donate": {
+      "type": "n8forged-donate",
+      "settings": {}
+    }
+  },
+  "order": ["donate"]
+}

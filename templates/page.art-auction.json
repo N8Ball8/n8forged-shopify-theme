@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "art_auction": {
+      "type": "n8forged-art-auction",
+      "blocks": {},
+      "block_order": [],
+      "settings": {
+        "eyebrow": "N8Forged / Mission Art Auction",
+        "heading": "JOY IN OUR CHAINS",
+        "introduction": "<p>An original acrylic and mixed-media painting by Andrea Darby, created around Paul’s humility and joy while imprisoned. Every dollar from the winning bid supports our family’s Costa Rica mission trip.</p>",
+        "artist_story": "<p>While writing to God’s people in Philippi, Paul had an attitude of humility and joy in the face of suffering. I too hope to consider others’ needs even when my own life appears hard, knowing Christ is our ultimate source of joy. I hope to continue to be bold for Christ, whether in life or in death.</p><p><strong>Inspired by Philippians 2:17 and Philippians 1:12–13 (NLT).</strong></p><p>“But I will rejoice even if I lose my life, pouring it out like a liquid offering to God, just like your faithful service is an offering to God. And I want all of you to share that joy.” (Philippians 2:17 NLT)</p><p>“And I want you to know, my dear brothers and sisters, that everything that has happened to me here has helped to spread the Good News. For everyone here, including the whole palace guard, knows that I am in chains because of Christ.” (Philippians 1:12–13 NLT)</p>",
+        "artist_bio": "<p>Andrea Darby is a Northwest Arkansas artist and graduate of the University of Arkansas, where she earned her degree in Art Education. A former high school art teacher with five years in public education and fifteen years in Christian education, she now serves with the Spectra art ministry team at Fellowship Bible Church in NWAR, using art as a form of worship and visual storytelling to complement the church sermons.</p><p>Working across a variety of mediums, Andrea is especially drawn to textured mixed media acrylic and hand-built pottery. Her work is characterized by layered symbolism and tactile surfaces, inviting both visual and physical engagement.</p><p><em>Joy in Our Chains</em> (2023), inspired by Philippians 1–2, reflects the paradox of joy in suffering and a life poured out for Christ. This piece is offered in support of missions, an enduring passion of Andrea’s shaped through many years of active involvement and leadership in international mission work.</p>",
+        "auction_id": "mission-art-2026",
+        "ends_at": "2026-08-10T01:00:00Z",
+        "api_url": "https://acvmuapvvkprxncftyev.supabase.co/functions/v1/auction-api",
+        "publishable_key": "sb_publishable_dKo0vIu4tWNIekMVcTmv3g_RZ5Y1qpi",
+        "rules": "<p>Bids are placed in $10 increments. The hidden reserve is met only when the public winning price reaches it. Bidding may extend in five-minute intervals. The winner has 48 hours to choose pickup in Little Rock, Arkansas or Northwest Arkansas, or insured shipping and complete payment. Shipping, packing, insurance, taxes, duties, and customs charges are additional. Full terms are presented during registration.</p>"
+      }
+    }
+  },
+  "order": [
+    "art_auction"
+  ]
+}

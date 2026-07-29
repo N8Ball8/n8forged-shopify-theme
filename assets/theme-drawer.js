@@ -15,7 +15,7 @@ const MODAL_BREAKPOINT = 990;
  * the trigger on close.
  *
  * On narrow viewports (< 990px) the drawer overlays with a backdrop. The
- * panel is a modal dialog (`showModal()`) — native focus trap, scroll-lock,
+ * panel is a modal dialog (`showModal()`) - native focus trap, scroll-lock,
  * and ARIA semantics. Same focus-on-close-button + restore-on-close UX.
  *
  * Dispatches {@link DrawerOpenEvent} and {@link DrawerCloseEvent}.
@@ -71,7 +71,7 @@ export class ThemeDrawer extends Component {
   /**
    * Restore path: the inline script in theme-drawer.liquid set [open] on
    * <theme-drawer> + <dialog> before this module loaded. The dialog is
-   * already visible — we just wire close listeners. We deliberately skip
+   * already visible - we just wire close listeners. We deliberately skip
    * trapFocus and focus moves: the user is loading a fresh page and
    * expects focus on main content, not inside a drawer left over from
    * the previous session.
@@ -97,7 +97,7 @@ export class ThemeDrawer extends Component {
 
   /**
    * Closes the drawer when the user clicks the backdrop (outside the dialog
-   * content area). Only meaningful in modal mode — in sidebar mode the
+   * content area). Only meaningful in modal mode - in sidebar mode the
    * dialog has no backdrop so this handler is inert.
    *
    * @param {MouseEvent} event - The mouse event.
@@ -141,7 +141,7 @@ export class ThemeDrawer extends Component {
         : null;
 
     // Close the current dialog mode and immediately reopen in the new mode.
-    // No animation — the drawer stays visually in place.
+    // No animation - the drawer stays visually in place.
     panel.close();
     removeTrapFocus();
 
@@ -177,8 +177,7 @@ export class ThemeDrawer extends Component {
   #onKeyDown = (event) => {
     if (event.key !== 'Escape') return;
     // isComposing: don't close while an Input Method Editor (e.g. Japanese,
-    // Chinese, Korean input) consumes Escape to dismiss its candidate list —
-    // can happen inside the cart's discount-code field.
+    // Chinese, Korean input) consumes Escape to dismiss its candidate list -     // can happen inside the cart's discount-code field.
     // defaultPrevented: let nested components handle Escape first.
     if (event.isComposing || event.defaultPrevented) return;
     if (!this.isOpen) return;
@@ -249,7 +248,7 @@ export class ThemeDrawer extends Component {
     this.style.setProperty('--drawer-stack-order', String(ThemeDrawer.#stackOrder));
 
     // In modal mode, dialogs live in the browser's top layer where z-index
-    // is ignored — stacking follows showModal() call order. Re-calling
+    // is ignored - stacking follows showModal() call order. Re-calling
     // showModal() moves this dialog to the top of the stack.
     if (this.#modalQuery.matches && panel.open) {
       lockScroll(panel);
@@ -339,7 +338,7 @@ export class ThemeDrawer extends Component {
     this.#previouslyFocused = null;
     // A Section Rendering API morph between open and close can replace the
     // trigger node. The JS reference stays valid but the element is detached
-    // from the live DOM — and .focus() on a detached node is a silent no-op,
+    // from the live DOM - and .focus() on a detached node is a silent no-op,
     // so we explicitly check and fall back to a fresh query.
     if (trigger && document.contains(trigger)) {
       trigger.focus();
@@ -362,7 +361,7 @@ export class ThemeDrawer extends Component {
    */
   async close() {
     if (this.#isClosing) {
-      // A close is already in progress — cancel any deferred open so the
+      // A close is already in progress - cancel any deferred open so the
       // drawer stays closed when the animation finishes.
       this.#deferredOpen = false;
       return;

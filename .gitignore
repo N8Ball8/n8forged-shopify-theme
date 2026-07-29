@@ -6,6 +6,7 @@
 
 # Local Shopify state and credentials
 .shopify/
+supabase/.temp/
 .env
 .env.*
 !.env.example

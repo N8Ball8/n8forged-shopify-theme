@@ -48,7 +48,7 @@ class CartDrawerComponent extends Component {
   }
 
   /**
-   * Handles the theme-drawer opening — updates sticky state and wires up the installments CTA.
+   * Handles the theme-drawer opening - updates sticky state and wires up the installments CTA.
    */
   #handleDrawerOpen = () => {
     this.#updateStickyState();
@@ -70,7 +70,7 @@ class CartDrawerComponent extends Component {
 
     // When the event originates inside an open MODAL <dialog> (e.g. quick-add),
     // defer the auto-open until that dialog's native `close` fires so its focus
-    // restoration runs first — otherwise we'd capture the wrong
+    // restoration runs first - otherwise we'd capture the wrong
     // `#previouslyFocused`. Non-modal dialogs (e.g. the hotspot preview) don't
     // close on add and don't move focus, so `:modal` excludes them.
     const sourceModal = /** @type {HTMLDialogElement | null} */ (

@@ -31,6 +31,7 @@
     {% if section.settings.collection != blank and shop.products_count != 0 %}
       {% paginate section.settings.collection.products by max_items %}
         {% for product in section.settings.collection.products limit: max_items %}
+        {% unless product.tags contains 'n8f-hidden' %}
         <div
           class="resource-list__item"
         >
@@ -45,6 +46,7 @@
           {% unless forloop.last %}
             <!--@list/split-->
           {% endunless %}
+        {% endunless %}
         {% endfor %}
       {% endpaginate %}
     {% else %}
