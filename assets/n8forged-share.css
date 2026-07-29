@@ -1,0 +1,57 @@
+.n8f-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.n8f-share__label {
+  margin-right: 5px;
+  color: currentColor;
+  opacity: 0.68;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.n8f-share__link,
+.n8f-share__button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(129, 157, 225, 0.32);
+  border-radius: 50%;
+  color: #dce6ff;
+  background: rgba(28, 40, 68, 0.58);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.n8f-share__link:hover,
+.n8f-share__link:focus-visible,
+.n8f-share__button:hover,
+.n8f-share__button:focus-visible {
+  color: #fff;
+  border-color: rgba(122, 155, 255, 0.75);
+  background: rgba(56, 91, 184, 0.42);
+  transform: translateY(-2px);
+}
+
+.n8f-share svg { width: 18px; height: 18px; fill: currentColor; }
+.n8f-share__status { flex-basis: 100%; min-height: 1.2em; color: currentColor; opacity: 0.72; font-size: 0.75rem; }
+.n8f-share__button[data-native-share] { display: none; }
+.n8f-share.has-native-share .n8f-share__button[data-native-share] { display: inline-grid; }
+
+.product-details .n8f-share {
+  width: 100%;
+  margin-top: 0;
+}
+
+@media (max-width: 599px) {
+  .n8f-share__label { flex-basis: 100%; margin-bottom: 3px; }
+}

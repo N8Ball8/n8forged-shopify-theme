@@ -1,0 +1,4 @@
+project_id = "acvmuapvvkprxncftyev"
+
+[functions.auction-api]
+verify_jwt = false

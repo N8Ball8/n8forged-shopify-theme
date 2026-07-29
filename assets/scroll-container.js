@@ -42,13 +42,13 @@ function scrollTo(options) {
  * restoration and handle it via `history.state` instead.
  *
  * On mobile (<990px), `document.scrollingElement` IS the scroll container, so native
- * restoration works perfectly — leave it enabled to avoid a one-frame flash from rAF.
+ * restoration works perfectly - leave it enabled to avoid a one-frame flash from rAF.
  *
- * Save: `pagehide` — fires exactly once per navigation, captures the exact scroll position
+ * Save: `pagehide` - fires exactly once per navigation, captures the exact scroll position
  * at the moment the user leaves. More accurate than debounced scroll (which can be stale
  * if the user scrolls and immediately clicks a link).
  *
- * Restore: unconditional `pageshow` — Horizon uses cross-document view transitions, so
+ * Restore: unconditional `pageshow` - Horizon uses cross-document view transitions, so
  * `pageshow` fires on every navigation (both bfcache and fresh loads). `popstate` is not
  * used because it doesn't fire for cross-document back navigation.
  */

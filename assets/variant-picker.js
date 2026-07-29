@@ -397,8 +397,7 @@ export default class VariantPicker extends Component {
           }
         }
 
-        // Variant data is null/invalid (e.g. unavailable variant combination) —
-        // still include detail with html so listeners can update UI (disable buttons, morph text)
+        // Variant data is null/invalid (e.g. unavailable variant combination) -         // still include detail with html so listeners can update UI (disable buttons, morph text)
         deferredEventPromise.resolve({
           variant: null,
           detail: {

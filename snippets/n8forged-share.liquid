@@ -1,0 +1,52 @@
+{{ 'n8forged-share.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'n8forged-share.js' | asset_url }}" defer="defer"></script>
+
+{% liquid
+  assign share_page_url = share_url | default: canonical_url
+  assign share_page_title = share_title | default: page_title
+  if template.suffix == 'art-auction'
+    assign share_page_url = request.origin | append: '/pages/contact?view=art-auction'
+    assign share_page_title = 'Bid on Joy in Our Chains: Support our Costa Rica mission'
+  endif
+  assign encoded_url = share_page_url | url_encode
+  assign encoded_title = share_page_title | url_encode
+  assign encoded_media = ''
+  if share_image
+    assign share_media_url = share_image | image_url: width: 1400 | prepend: 'https:'
+    assign encoded_media = share_media_url | url_encode
+  elsif share_image_url
+    assign encoded_media = share_image_url | url_encode
+  endif
+%}
+
+<div
+  class="n8f-share"
+  data-n8f-share
+  data-share-url="{{ share_page_url | escape }}"
+  data-share-title="{{ share_page_title | escape }}"
+>
+  <span class="n8f-share__label">{{ share_label | default: 'Share this page' }}</span>
+
+  <a class="n8f-share__link" href="https://www.facebook.com/sharer/sharer.php?u={{ encoded_url }}" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Facebook">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-9h3l.5-3.5h-3.5V7.3c0-1 .3-1.8 1.8-1.8H17V2.3c-.7-.1-1.5-.3-2.7-.3-2.7 0-4.6 1.7-4.6 4.8v2.7H7V13h2.7v9h3.8Z"/></svg>
+  </a>
+  <a class="n8f-share__link" href="https://twitter.com/intent/tweet?text={{ encoded_title }}&url={{ encoded_url }}" target="_blank" rel="noopener" aria-label="Share on X" title="X">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.1l-4.8-6.3L6.6 22H3.5l7.1-8.1L3.2 2h6.3l4.3 5.7L18.9 2Zm-1.1 17.9h1.7L8.6 4H6.8l11 15.9Z"/></svg>
+  </a>
+  <button class="n8f-share__button" type="button" data-share-copy="instagram" aria-label="Copy link for Instagram" title="Instagram">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9Zm9.8 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+  </button>
+  <a class="n8f-share__link" href="https://pinterest.com/pin/create/button/?url={{ encoded_url }}{% if encoded_media != blank %}&media={{ encoded_media }}{% endif %}&description={{ encoded_title }}" target="_blank" rel="noopener" aria-label="Share on Pinterest" title="Pinterest">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-1.6 0-3.5.4-5.2l1.3-5.5s-.3-.7-.3-1.8c0-1.7 1-3 2.2-3 1 0 1.6.8 1.6 1.8 0 1.1-.7 2.7-1 4.2-.3 1.3.7 2.4 2 2.4 2.4 0 4.2-2.5 4.2-6.1 0-3.2-2.3-5.4-5.6-5.4-3.8 0-6 2.8-6 5.8 0 1.1.4 2.4 1 3 .1.1.1.2.1.4l-.4 1.6c-.1.5-.5.6-.9.4-2.1-1-3.4-4-3.4-6.4C3.6 4.3 6.8 2 12 2Z"/></svg>
+  </a>
+  <a class="n8f-share__link" href="mailto:?subject={{ encoded_title }}&body={{ encoded_url }}" aria-label="Share by email" title="Email">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm9 8.2L20.4 6H3.6l8.4 6.2Zm0 2.5L3 8v10h18V8l-9 6.7Z"/></svg>
+  </a>
+  <button class="n8f-share__button" type="button" data-native-share aria-label="Open device sharing options" title="More sharing options">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16a3 3 0 0 0-2.4 1.2L8.9 13.6a3.4 3.4 0 0 0 0-3.2l6.7-3.6A3 3 0 1 0 15 5l-6.8 3.7a3 3 0 1 0 0 6.6L15 19a3 3 0 1 0 3-3Z"/></svg>
+  </button>
+  <button class="n8f-share__button" type="button" data-share-copy="link" aria-label="Copy page link" title="Copy link">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a2 2 0 0 0 2.8 0l3-3a2 2 0 1 0-2.8-2.8l-1.2 1.2-1.4-1.4 1.2-1.2a4 4 0 0 1 5.6 5.6l-3 3a4 4 0 0 1-5.6 0l1.4-1.4Zm2.8-2.8a2 2 0 0 0-2.8 0l-3 3a2 2 0 1 0 2.8 2.8l1.2-1.2 1.4 1.4-1.2 1.2a4 4 0 0 1-5.6-5.6l3-3a4 4 0 0 1 5.6 0l-1.4 1.4Z"/></svg>
+  </button>
+  <span class="n8f-share__status" data-share-status aria-live="polite"></span>
+</div>
