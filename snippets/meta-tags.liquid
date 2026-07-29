@@ -82,7 +82,7 @@
 
   if request.page_type == 'blog' and blog.handle == 'news'
     assign seo_noindex = true
-  elsif request.page_type == 'collection' and collection.handle == 'featured'
+  elsif request.path == '/collections/featured'
     assign seo_noindex = true
   elsif request.path contains '/policies/'
     assign seo_noindex = true
@@ -91,7 +91,7 @@
   assign og_description = seo_description
 %}
 
-{%- if seo_noindex -%}
+{%- if seo_noindex or request.path == '/collections/featured' -%}
   <meta name="robots" content="noindex, follow">
 {%- endif -%}
 
@@ -137,7 +137,7 @@
     property="og:image:alt"
     content="{{ custom_og_image_alt | escape }}"
   >
-{%- elsif product_social_image -%}
+{%- elsif product_social_image != blank -%}
   <meta
     property="og:image"
     content="http:{{ product_social_image | image_url }}"
