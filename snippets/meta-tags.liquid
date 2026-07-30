@@ -137,7 +137,7 @@
     property="og:image:alt"
     content="{{ custom_og_image_alt | escape }}"
   >
-{%- elsif product_social_image != blank -%}
+{%- elsif request.page_type == 'product' and product_social_image != blank -%}
   <meta
     property="og:image"
     content="http:{{ product_social_image | image_url }}"
@@ -194,7 +194,7 @@
     name="twitter:image"
     content="{{ custom_og_image }}"
   >
-{% elsif product_social_image != blank %}
+{% elsif request.page_type == 'product' and product_social_image != blank %}
   <meta
     name="twitter:image"
     content="https:{{ product_social_image | image_url }}"
