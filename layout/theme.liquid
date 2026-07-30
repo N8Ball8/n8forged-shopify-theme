@@ -35,6 +35,9 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
     {{ 'n8forged-global.css' | asset_url | stylesheet_tag }}
+    {%- if request.page_type == 'index' -%}
+      {{ 'n8forged-home.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
     <script src="{{ 'n8forged-tracking.js' | asset_url }}" defer="defer"></script>
 
     {% if request.design_mode %}
