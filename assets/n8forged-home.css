@@ -107,6 +107,11 @@
   .n8f-hero { min-height: auto; }
   .n8f-hero__inner { grid-template-columns: 1fr; padding-top: 96px; }
   .n8f-hero__visual { width: min(100%, 560px); margin-inline: auto; }
+  .n8f-hero::before, .n8f-hero__visual::before { display: none; }
+  .n8f-forge-card { transform: none; }
+  .n8f-forge-card:hover, .n8f-product-card:hover, .n8f-product-card:hover .n8f-product-card__media, .n8f-path:hover { transform: none; }
+  .n8f-forge-card__topline, .n8f-forge-card__footer, .n8f-forge-mark { transform: none; }
+  .n8f-coordinate { display: none; }
   .n8f-mission__grid { grid-template-columns: 1fr; }
   .n8f-product-grid { grid-template-columns: repeat(2, 1fr); }
   .n8f-path-grid { grid-template-columns: 1fr; }
@@ -123,9 +128,6 @@
   .n8f-proof { display: grid; }
   .n8f-hero__visual { padding: 10px; }
   .n8f-forge-card { padding: 20px; transform: none; }
-  .n8f-forge-card:hover, .n8f-product-card:hover, .n8f-product-card:hover .n8f-product-card__media, .n8f-path:hover { transform: none; }
-  .n8f-hero::before, .n8f-hero__visual::before { display: none; }
-  .n8f-coordinate { display: none; }
   .n8f-forge-card__footer { flex-direction: column; }
   .n8f-section-heading { align-items: start; flex-direction: column; }
   .n8f-product-grid { gap: 10px; }
