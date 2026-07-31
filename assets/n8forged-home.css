@@ -54,7 +54,7 @@
 .n8f-forge-mark { position: relative; z-index: 1; display: flex; flex-direction: column; transform: translateZ(54px); }
 .n8f-forge-mark span { color: transparent; font-size: clamp(94px, 12vw, 168px); font-weight: 800; line-height: .7; letter-spacing: -.08em; -webkit-text-stroke: 1px rgb(79 124 255 / 68%); text-shadow: 0 0 34px rgb(37 99 235 / 25%); }
 .n8f-forge-mark strong { margin-top: 22px; font-size: clamp(28px, 4vw, 54px); letter-spacing: .2em; line-height: 1; }
-.n8f-coordinate { position: absolute; padding: 8px 10px; border: 1px solid var(--n8f-border); background: rgb(5 7 13 / 75%); backdrop-filter: blur(10px); color: var(--n8f-cyan); font: 10px monospace; letter-spacing: .08em; }
+.n8f-coordinate { position: absolute; z-index: 3; padding: 8px 10px; border: 1px solid var(--n8f-border); background: rgb(5 7 13 / 75%); backdrop-filter: blur(10px); color: var(--n8f-cyan); font: 10px monospace; letter-spacing: .08em; transform: translateZ(70px); }
 .n8f-coordinate--one { top: 13%; left: 0; }
 .n8f-coordinate--two { right: 0; bottom: 16%; color: #c4b5fd; }
 
