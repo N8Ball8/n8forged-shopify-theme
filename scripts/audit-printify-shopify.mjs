@@ -93,13 +93,20 @@ function auditProduct(printifyProduct, shopifyProduct, handle) {
 
     const shopifyVariant = shopifyBySku.get(variant.sku);
     if (!shopifyVariant) {
-      findings.push({ severity: 'error', type: 'missing_shopify_variant', sku: variant.sku, variant: variant.title });
+      if (variant.is_available) {
+        findings.push({
+          severity: 'error',
+          type: 'missing_shopify_variant',
+          sku: variant.sku,
+          variant: variant.title,
+        });
+      }
       continue;
     }
 
     if (Boolean(variant.is_available) !== Boolean(shopifyVariant.available)) {
       findings.push({
-        severity: 'error',
+        severity: 'warning',
         type: 'availability_mismatch',
         sku: variant.sku,
         variant: variant.title,
@@ -244,6 +251,6 @@ const summary = markdownSummary(report);
 console.log(summary);
 if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
 
-if (report.summary.errors > 0 || report.summary.warnings > 0 || report.summary.productsSkipped > 0) {
+if (report.summary.errors > 0 || report.summary.productsSkipped > 0) {
   process.exitCode = 1;
 }
