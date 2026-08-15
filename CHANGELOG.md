@@ -5,6 +5,12 @@ All notable N8Forged theme changes will be documented here. Versions follow
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-08-15
+
+### Fixed
+
+- Displayed the selected or first available variant price on homepage product cards.
+
 ## [0.4.0] - 2026-07-29
 
 ### Added
@@ -62,7 +68,8 @@ All notable N8Forged theme changes will be documented here. Versions follow
 - Repeatable local validation and preview commands.
 - Development, release, rollback, and architecture-decision documentation.
 
-[Unreleased]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/N8Ball8/n8forged-shopify-theme/compare/v0.1.0...v0.2.0
